@@ -102,6 +102,33 @@
   .passage-para{ font-size:17px; line-height:1.9; margin-bottom:20px; }
   .passage-para b{ font-weight:700; }
   input.blank.blank-sm{ min-width:110px; }
+
+  /* Exercise 4 & 5 (open-ended, AI feedback) */
+  .oe-table{ width:100%; border-collapse:collapse; margin-bottom:14px; border:2px solid var(--border); }
+  .oe-table th{ background:#3a3a3a; color:#fff; text-align:left; padding:12px 16px; font-size:16px; width:50%; }
+  .oe-table td{ border-top:1px solid #999; padding:10px 16px; vertical-align:top; }
+  .oe-table tr.example td{ color:#555; font-style:italic; background:rgba(0,0,0,0.03); }
+  .oe-table input[type=text]{
+    width:100%; font-size:16px; font-family:inherit; padding:8px 6px;
+    border:none; border-bottom:2px dotted #444; background:transparent; color:var(--ink);
+  }
+  .oe-table input[type=text]:focus{ outline:none; border-bottom-color:#000; }
+  .situation{ margin-bottom:24px; }
+  .situation .sit-label{ font-weight:700; margin-bottom:8px; }
+  .situation textarea{
+    width:100%; min-height:110px; font-family:inherit; font-size:16px; padding:12px;
+    border:2px solid var(--border); border-radius:6px; resize:vertical; color:var(--ink); background:rgba(255,255,255,0.6);
+  }
+  .oe-note{ font-size:14px; color:#555; font-style:italic; margin:-8px 0 20px 0; }
+  .feedback-status{ font-size:15px; font-weight:600; margin-left:6px; }
+  .feedback-status.err{ color:var(--incorrect); }
+  .feedback-box{
+    background:rgba(255,255,255,0.65); border:2.5px solid var(--correct); border-radius:8px;
+    padding:20px 24px; margin-top:24px; font-size:16px; line-height:1.6; white-space:pre-wrap;
+  }
+  .feedback-box .fb-label{ font-weight:700; color:var(--correct); margin-bottom:8px; display:block; }
+  .review-summary{ max-width:820px; margin:0 auto 24px auto; font-size:16px; line-height:1.7; }
+  .review-summary h3{ font-size:17px; margin:18px 0 6px 0; }
 </style>
 </head>
 <body>
@@ -148,6 +175,14 @@
         <div class="card-buttons">
           <button id="btnGoEx3">Start</button>
           <button id="btnReviewEx3" class="secondary" style="display:none;">Review</button>
+        </div>
+      </div>
+      <div class="card" id="card-ex4">
+        <h2>Exercises 4 &amp; 5</h2>
+        <div class="status" id="status-ex4">Not started</div>
+        <div class="card-buttons">
+          <button id="btnGoEx4">Start</button>
+          <button id="btnReviewEx4" class="secondary" style="display:none;">Review</button>
         </div>
       </div>
     </div>
@@ -226,6 +261,76 @@
     </div>
   </div>
 
+  <!-- EXERCISE 4 & 5 -->
+  <div class="screen" id="screen-ex4">
+    <h1 class="title" style="font-size:34px;">Exercises 4 &amp; 5</h1>
+
+    <p class="instr"><b>4</b> &nbsp;Complete the table with your own phrases that express opinion and agreement or disagreement. Add at least three expressions in each column. An example of each has been given.</p>
+
+    <table class="oe-table">
+      <thead>
+        <tr><th>Expressing own opinion</th><th>Expressing agreement or disagreement</th></tr>
+      </thead>
+      <tbody>
+        <tr class="example">
+          <td>To my mind</td>
+          <td>Okay, but have you considered other things?</td>
+        </tr>
+        <tr>
+          <td><input type="text" id="e4-op-1" placeholder="Your phrase 1" autocomplete="off"></td>
+          <td><input type="text" id="e4-ag-1" placeholder="Your phrase 1" autocomplete="off"></td>
+        </tr>
+        <tr>
+          <td><input type="text" id="e4-op-2" placeholder="Your phrase 2" autocomplete="off"></td>
+          <td><input type="text" id="e4-ag-2" placeholder="Your phrase 2" autocomplete="off"></td>
+        </tr>
+        <tr>
+          <td><input type="text" id="e4-op-3" placeholder="Your phrase 3" autocomplete="off"></td>
+          <td><input type="text" id="e4-ag-3" placeholder="Your phrase 3" autocomplete="off"></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="instr"><b>5</b> &nbsp;Write short dialogues for each of these three situations. Use the expressions you listed in Activity 4.</p>
+    <p class="oe-note">(Just write natural dialogues — no need to underline or circle anything for this digital version.)</p>
+
+    <div class="situation">
+      <div class="sit-label">Situation 1: Two friends discussing a sports event they have just watched.</div>
+      <textarea id="e5-sit1" placeholder="Write your dialogue here..."></textarea>
+    </div>
+    <div class="situation">
+      <div class="sit-label">Situation 2: Two friends discussing a test they have just taken.</div>
+      <textarea id="e5-sit2" placeholder="Write your dialogue here..."></textarea>
+    </div>
+    <div class="situation">
+      <div class="sit-label">Situation 3: Two friends discussing what to do at the weekend.</div>
+      <textarea id="e5-sit3" placeholder="Write your dialogue here..."></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button id="btnGetFeedback">Get AI Feedback</button>
+      <span class="feedback-status" id="feedbackStatus"></span>
+    </div>
+
+    <div id="feedbackBox" class="feedback-box" style="display:none;">
+      <span class="fb-label">Feedback</span>
+      <span id="feedbackText"></span>
+    </div>
+
+    <div class="btn-row">
+      <button id="btnReviewFromEx4" class="secondary" disabled>Review This Exercise &rarr;</button>
+    </div>
+  </div>
+
+  <!-- EXERCISE 4 & 5 REVIEW -->
+  <div class="screen" id="screen-ex4-review">
+    <h1 class="title" style="font-size:32px;">Exercises 4 &amp; 5 — Review</h1>
+    <div class="review-summary" id="reviewSummary-ex4"></div>
+    <div class="btn-row">
+      <button id="btnBackHome4">Back to Home</button>
+    </div>
+  </div>
+
 </div>
 </div>
 
@@ -233,6 +338,7 @@
 (function(){
 
   var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwEdGlILb09xvDeqX9EZGHXOTqQA8Um7Se0nojnr2vC4ujaGAaV4iz7TwDWB1Pxbf7F2Q/exec';
+  var AI_FEEDBACK_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzwUGt5GinWB0U0vEgUh4cvwwwWbnJblizjpOj6MhelsWflj7cp9SOY4u2eNccGcOH8/exec';
 
   // ---------- DATA ----------
   var ex1Bank = ["consume","guaranteed","harmless","participants","actual","sprinkled","fooled","underestimate"];
@@ -347,11 +453,13 @@
   var startTime = null;
   var submitted = false;
 
-  var ex1Done = false, ex2Done = false, ex3Done = false;
+  var ex1Done = false, ex2Done = false, ex3Done = false, ex4Done = false;
   var ex1Correct = 0, ex1Total = 0, ex2Correct = 0, ex2Total = 0, ex3Correct = 0, ex3Total = 0;
   var ex1Records = []; // {qnum, letter, sentence, given, correct, isRight}
   var ex2Records = [];
   var ex3Records = [];
+  var ex4Feedback = "";
+  var ex4Answers = null; // { opinions:[], agreements:[], dialogues:[] }
 
   // ---------- BUILD WORD BANKS ----------
   function buildBank(containerId, words, idPrefix){
@@ -448,12 +556,15 @@
   document.getElementById("btnGoEx1").addEventListener("click", function(){ showScreen("screen-ex1"); });
   document.getElementById("btnGoEx2").addEventListener("click", function(){ showScreen("screen-ex2"); });
   document.getElementById("btnGoEx3").addEventListener("click", function(){ showScreen("screen-ex3"); });
+  document.getElementById("btnGoEx4").addEventListener("click", function(){ showScreen("screen-ex4"); });
   document.getElementById("btnReviewEx1").addEventListener("click", function(){ renderReview("ex1"); showScreen("screen-ex1-review"); });
   document.getElementById("btnReviewEx2").addEventListener("click", function(){ renderReview("ex2"); showScreen("screen-ex2-review"); });
   document.getElementById("btnReviewEx3").addEventListener("click", function(){ renderReview("ex3"); showScreen("screen-ex3-review"); });
+  document.getElementById("btnReviewEx4").addEventListener("click", function(){ renderEx4Review(); showScreen("screen-ex4-review"); });
   document.getElementById("btnBackHome1").addEventListener("click", function(){ showScreen("screen-home"); });
   document.getElementById("btnBackHome2").addEventListener("click", function(){ showScreen("screen-home"); });
   document.getElementById("btnBackHome3").addEventListener("click", function(){ showScreen("screen-home"); });
+  document.getElementById("btnBackHome4").addEventListener("click", function(){ showScreen("screen-home"); });
 
   // ---------- CHECK ----------
   function normalize(v){ return v.trim().toLowerCase(); }
@@ -589,6 +700,114 @@
     renderReview("ex3"); showScreen("screen-ex3-review");
   });
 
+  // ---------- EXERCISE 4 & 5 (open-ended, AI feedback) ----------
+  function getEx4Values(){
+    return {
+      opinions: [
+        document.getElementById("e4-op-1").value.trim(),
+        document.getElementById("e4-op-2").value.trim(),
+        document.getElementById("e4-op-3").value.trim()
+      ],
+      agreements: [
+        document.getElementById("e4-ag-1").value.trim(),
+        document.getElementById("e4-ag-2").value.trim(),
+        document.getElementById("e4-ag-3").value.trim()
+      ],
+      dialogues: [
+        document.getElementById("e5-sit1").value.trim(),
+        document.getElementById("e5-sit2").value.trim(),
+        document.getElementById("e5-sit3").value.trim()
+      ]
+    };
+  }
+
+  document.getElementById("btnGetFeedback").addEventListener("click", function(){
+    var vals = getEx4Values();
+    var anyFilled = vals.opinions.concat(vals.agreements).concat(vals.dialogues).some(function(v){ return v.length > 0; });
+    var statusEl = document.getElementById("feedbackStatus");
+    if(!anyFilled){
+      statusEl.textContent = "Please fill in at least some of the table and dialogues first.";
+      statusEl.classList.add("err");
+      return;
+    }
+    statusEl.classList.remove("err");
+    statusEl.textContent = "Getting feedback...";
+    document.getElementById("btnGetFeedback").disabled = true;
+
+    var instructions =
+      "Exercise 4: Complete a table with your own phrases that express opinion, and phrases that express agreement or disagreement (at least three each).\n" +
+      "Exercise 5: Write short dialogues for three situations (a sports event just watched, a test just taken, weekend plans), using the expressions from Exercise 4.";
+
+    var studentWork =
+      "Exercise 4 - Opinion phrases: " + vals.opinions.filter(Boolean).join("; ") + "\n" +
+      "Exercise 4 - Agreement/disagreement phrases: " + vals.agreements.filter(Boolean).join("; ") + "\n\n" +
+      "Exercise 5 - Situation 1 (sports event) dialogue:\n" + (vals.dialogues[0] || "(not written)") + "\n\n" +
+      "Exercise 5 - Situation 2 (test) dialogue:\n" + (vals.dialogues[1] || "(not written)") + "\n\n" +
+      "Exercise 5 - Situation 3 (weekend plans) dialogue:\n" + (vals.dialogues[2] || "(not written)");
+
+    fetch(AI_FEEDBACK_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify({
+        exerciseName: "Exercises 4 & 5 - Opinion, Agreement & Dialogues",
+        instructions: instructions,
+        studentWork: studentWork
+      })
+    })
+    .then(function(res){ return res.json(); })
+    .then(function(data){
+      document.getElementById("btnGetFeedback").disabled = false;
+      if(data.error){
+        statusEl.textContent = "Couldn't get feedback: " + data.error;
+        statusEl.classList.add("err");
+        return;
+      }
+      statusEl.textContent = "";
+      ex4Feedback = data.feedback || "";
+      ex4Answers = vals;
+      document.getElementById("feedbackBox").style.display = "block";
+      document.getElementById("feedbackText").textContent = ex4Feedback;
+      document.getElementById("btnReviewFromEx4").disabled = false;
+      ex4Done = true;
+      updateHomeCards();
+      checkAllDone();
+    })
+    .catch(function(err){
+      document.getElementById("btnGetFeedback").disabled = false;
+      statusEl.textContent = "Connection error — please try again.";
+      statusEl.classList.add("err");
+      console.error("AI feedback error", err);
+    });
+  });
+
+  document.getElementById("btnReviewFromEx4").addEventListener("click", function(){
+    renderEx4Review(); showScreen("screen-ex4-review");
+  });
+
+  function renderEx4Review(){
+    var vals = ex4Answers || getEx4Values();
+    var el = document.getElementById("reviewSummary-ex4");
+    var html = "";
+    html += "<h3>Exercise 4 — Your phrases</h3>";
+    html += "<p><b>Opinion:</b> " + (vals.opinions.filter(Boolean).join("; ") || "(none written)") + "</p>";
+    html += "<p><b>Agreement/disagreement:</b> " + (vals.agreements.filter(Boolean).join("; ") || "(none written)") + "</p>";
+    html += "<h3>Exercise 5 — Your dialogues</h3>";
+    html += "<p><b>Situation 1:</b><br>" + (vals.dialogues[0] ? vals.dialogues[0].replace(/\n/g,"<br>") : "(not written)") + "</p>";
+    html += "<p><b>Situation 2:</b><br>" + (vals.dialogues[1] ? vals.dialogues[1].replace(/\n/g,"<br>") : "(not written)") + "</p>";
+    html += "<p><b>Situation 3:</b><br>" + (vals.dialogues[2] ? vals.dialogues[2].replace(/\n/g,"<br>") : "(not written)") + "</p>";
+    el.innerHTML = html;
+    var fb = document.createElement("div");
+    fb.className = "feedback-box";
+    var lbl = document.createElement("span");
+    lbl.className = "fb-label";
+    lbl.textContent = "Feedback";
+    var txt = document.createElement("span");
+    txt.textContent = ex4Feedback;
+    fb.appendChild(lbl);
+    fb.appendChild(txt);
+    el.appendChild(fb);
+  }
+
   // ---------- HOMESCREEN UPDATE ----------
   function updateHomeCards(){
     if(ex1Done){
@@ -611,6 +830,13 @@
       document.getElementById("btnGoEx3").textContent = "Redo (view only)";
       document.getElementById("btnGoEx3").disabled = true;
       document.getElementById("btnReviewEx3").style.display = "inline-block";
+    }
+    if(ex4Done){
+      document.getElementById("status-ex4").textContent = "Completed";
+      document.getElementById("status-ex4").classList.add("done");
+      document.getElementById("btnGoEx4").textContent = "Redo (view only)";
+      document.getElementById("btnGoEx4").disabled = true;
+      document.getElementById("btnReviewEx4").style.display = "inline-block";
     }
   }
 
@@ -651,7 +877,7 @@
   }
 
   function checkAllDone(){
-    if(ex1Done && ex2Done && ex3Done){
+    if(ex1Done && ex2Done && ex3Done && ex4Done){
       document.getElementById("allDoneMsg").style.display = "block";
       submitAll();
     }
@@ -663,7 +889,7 @@
 
     var elapsedMs = startTime ? (new Date() - startTime) : 0;
     var timeSpent = formatDuration(elapsedMs);
-    var scoreString = ex1Correct + "/" + ex1Total + ", " + ex2Correct + "/" + ex2Total + ", " + ex3Correct + "/" + ex3Total;
+    var scoreString = ex1Correct + "/" + ex1Total + ", " + ex2Correct + "/" + ex2Total + ", " + ex3Correct + "/" + ex3Total + ", Ex4&5: Completed";
 
     var wrongParts = [];
     ex1Records.concat(ex2Records).concat(ex3Records).forEach(function(r){
