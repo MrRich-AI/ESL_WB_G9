@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Unit 3 Vocabulary | p. 26 Ex. 1 & 2</title>
+<title>Unit 3 Vocabulary | pp. 26-28 Exercises 1 - 5</title>
 <style>
   :root{
     --ink:#1a1a1a;
@@ -97,6 +97,11 @@
   .review-item .def{ font-size:14px; color:#333; font-style:italic; margin-top:4px; }
   .review-item.was-wrong{ background:rgba(179,38,30,0.05); }
   .review-item.was-right{ background:rgba(30,125,52,0.05); }
+
+  /* Passage (Exercise 3) */
+  .passage-para{ font-size:17px; line-height:1.9; margin-bottom:20px; }
+  .passage-para b{ font-weight:700; }
+  input.blank.blank-sm{ min-width:110px; }
 </style>
 </head>
 <body>
@@ -107,7 +112,7 @@
   <div class="screen active" id="screen-start">
     <div class="start-box">
       <h1>Unit 3 Vocabulary</h1>
-      <div class="pagenum">p. 26 &middot; Ex. 1 &amp; 2</div>
+      <div class="pagenum">pp. 26-28 &middot; Exercises 1 - 5</div>
       <input type="text" id="studentName" placeholder="Enter your name" autocomplete="off">
       <button id="btnStart" disabled>Start</button>
     </div>
@@ -117,7 +122,7 @@
   <div class="screen" id="screen-home">
     <div class="home-header">
       <h1>Unit 3 Vocabulary</h1>
-      <div class="pagenum">p. 26 &middot; Ex. 1 &amp; 2</div>
+      <div class="pagenum">pp. 26-28 &middot; Exercises 1 - 5</div>
       <div class="student">Student: <span id="homeName"></span></div>
     </div>
     <div class="home-cards">
@@ -137,8 +142,16 @@
           <button id="btnReviewEx2" class="secondary" style="display:none;">Review</button>
         </div>
       </div>
+      <div class="card" id="card-ex3">
+        <h2>Exercise 3</h2>
+        <div class="status" id="status-ex3">Not started</div>
+        <div class="card-buttons">
+          <button id="btnGoEx3">Start</button>
+          <button id="btnReviewEx3" class="secondary" style="display:none;">Review</button>
+        </div>
+      </div>
     </div>
-    <div class="all-done" id="allDoneMsg">Both exercises complete — great work!</div>
+    <div class="all-done" id="allDoneMsg">All exercises complete — great work!</div>
   </div>
 
   <!-- EXERCISE 1 -->
@@ -189,6 +202,30 @@
     </div>
   </div>
 
+  <!-- EXERCISE 3 -->
+  <div class="screen" id="screen-ex3">
+    <h1 class="title" style="font-size:34px;">Restaurant review</h1>
+    <p class="instr"><b>3</b> &nbsp;Read this review of a restaurant. Choose adjectives from the box to fill each gap. In some cases, more than one adjective is possible, but try to use each adjective only once.</p>
+    <div class="wordbank" id="bank-ex3"></div>
+    <div id="passage-ex3"></div>
+    <div class="btn-row">
+      <button id="btnCheck3">Check Answers</button>
+      <span class="score-note" id="score3Note"></span>
+    </div>
+    <div class="btn-row">
+      <button id="btnReviewFromEx3" class="secondary" disabled>Review This Exercise &rarr;</button>
+    </div>
+  </div>
+
+  <!-- EXERCISE 3 REVIEW -->
+  <div class="screen" id="screen-ex3-review">
+    <h1 class="title" style="font-size:32px;">Exercise 3 — Review</h1>
+    <div class="review-list" id="reviewList-ex3"></div>
+    <div class="btn-row">
+      <button id="btnBackHome3">Back to Home</button>
+    </div>
+  </div>
+
 </div>
 </div>
 
@@ -218,6 +255,63 @@
     { letter:"e", qnum:13, before:"The prices in the new restaurant are ", blanks:[{id:"e2e",answer:"considerably"}], after:" lower than elsewhere." }
   ];
 
+  var ex3Bank = ["attractive","bright","busy","convenient","cosy","delicious","extensive","fashionable","fresh","happy","healthy","helpful","local","overpriced","polite","reasonable"];
+  var ex3Paragraphs = [
+    { parts: [
+      {text:"How many people reading this would welcome another vegetarian restaurant? If you do not eat meat then you will probably be extremely "},
+      {blank:{letter:"a", qnum:14, answer:"happy"}},
+      {text:" to have another vegetarian option nearby."}
+    ]},
+    { parts: [
+      {text:"Next week sees the opening of Healthy Dishes. This is an "},
+      {blank:{letter:"b", qnum:15, answer:"attractive"}},
+      {text:", "},
+      {blank:{letter:"c", qnum:16, answer:"cosy"}},
+      {text:" place, in a "},
+      {blank:{letter:"d", qnum:17, answer:"convenient"}},
+      {text:" location, serving an "},
+      {blank:{letter:"e", qnum:18, answer:"extensive"}},
+      {text:" range of vegetarian dishes."}
+    ]},
+    { parts: [
+      {text:"The restaurant can seat up to about 18 people, and the style is "},
+      {blank:{letter:"f", qnum:19, answer:"bright"}},
+      {text:" and "},
+      {blank:{letter:"g", qnum:20, answer:"fashionable"}},
+      {text:"."}
+    ]},
+    { parts: [
+      {text:"When I visited, the restaurant had not properly opened, but I was able to sample some "},
+      {blank:{letter:"h", qnum:21, answer:"delicious"}},
+      {text:" dishes and "},
+      {blank:{letter:"i", qnum:22, answer:"fresh"}},
+      {text:" juices."}
+    ]},
+    { parts: [
+      {text:"The food is not cheap, but nor is it "},
+      {blank:{letter:"j", qnum:23, answer:"overpriced"}},
+      {text:", as all the ingredients are "},
+      {blank:{letter:"k", qnum:24, answer:"local"}},
+      {text:" and 100% organic. So, in my opinion, paying slightly more for your food is "},
+      {blank:{letter:"l", qnum:25, answer:"reasonable"}},
+      {text:"."}
+    ]},
+    { parts: [
+      {text:"The young owners, Ben and Sam, who only graduated from university last year, were "},
+      {blank:{letter:"m", qnum:26, answer:"polite"}},
+      {text:", friendly and very "},
+      {blank:{letter:"n", qnum:27, answer:"helpful"}},
+      {text:", and they are working very hard to get everything ready in time for the grand opening."}
+    ]},
+    { parts: [
+      {text:"In conclusion, if you are vegetarian and want a "},
+      {blank:{letter:"o", qnum:28, answer:"healthy"}},
+      {text:" new restaurant to try, you won't be disappointed with Healthy Dishes. I predict it will be "},
+      {blank:{letter:"p", qnum:29, answer:"busy"}},
+      {text:", so make sure you reserve your table."}
+    ]}
+  ];
+
   var definitions = {
     participants: "people who take part in something",
     guaranteed: "certain to happen; promised",
@@ -231,36 +325,55 @@
     outlets: "shops or stores where a company sells its products",
     simply: "just; plainly, with no complication",
     majority: "more than half of a group",
-    considerably: "by a large amount"
+    considerably: "by a large amount",
+    attractive: "pleasant to look at; appealing",
+    bright: "well-lit; cheerful and vivid",
+    busy: "full of activity; having a lot of customers",
+    convenient: "easy to get to or use",
+    cosy: "warm, comfortable and inviting",
+    delicious: "very pleasant to taste",
+    extensive: "covering a large range; wide-ranging",
+    fashionable: "stylish; currently popular",
+    fresh: "recently made; not stale",
+    happy: "feeling or showing pleasure",
+    healthy: "good for your health",
+    helpful: "willing to help; useful",
+    local: "belonging to or coming from the immediate area",
+    overpriced: "priced higher than it is worth",
+    polite: "having good manners; courteous",
+    reasonable: "fair; not too expensive for what you get"
   };
 
   var startTime = null;
   var submitted = false;
 
-  var ex1Done = false, ex2Done = false;
-  var ex1Correct = 0, ex1Total = 0, ex2Correct = 0, ex2Total = 0;
+  var ex1Done = false, ex2Done = false, ex3Done = false;
+  var ex1Correct = 0, ex1Total = 0, ex2Correct = 0, ex2Total = 0, ex3Correct = 0, ex3Total = 0;
   var ex1Records = []; // {qnum, letter, sentence, given, correct, isRight}
   var ex2Records = [];
+  var ex3Records = [];
 
   // ---------- BUILD WORD BANKS ----------
-  function buildBank(containerId, words){
+  function buildBank(containerId, words, idPrefix){
+    idPrefix = idPrefix || "bankword-";
     var el = document.getElementById(containerId);
     el.innerHTML = "";
     words.forEach(function(w){
       var span = document.createElement("span");
       span.textContent = w;
-      span.id = "bankword-" + w;
+      span.id = idPrefix + w;
       el.appendChild(span);
     });
   }
   buildBank("bank-ex1", ex1Bank);
   buildBank("bank-ex2", ex2Bank);
+  buildBank("bank-ex3", ex3Bank, "bankword3-");
 
   // ---------- BUILD ITEMS ----------
-  function makeInput(id){
+  function makeInput(id, extraClass){
     var inp = document.createElement("input");
     inp.type = "text";
-    inp.className = "blank";
+    inp.className = "blank" + (extraClass ? " " + extraClass : "");
     inp.id = id;
     inp.autocomplete = "off";
     return inp;
@@ -293,6 +406,27 @@
   buildItems("items-ex1", ex1Items);
   buildItems("items-ex2", ex2Items);
 
+  function buildPassage(containerId, paragraphs){
+    var container = document.getElementById(containerId);
+    paragraphs.forEach(function(para){
+      var p = document.createElement("p");
+      p.className = "passage-para";
+      para.parts.forEach(function(part){
+        if(part.text !== undefined){
+          p.appendChild(document.createTextNode(part.text));
+        } else if(part.blank){
+          var b = part.blank;
+          var label = document.createElement("b");
+          label.textContent = "(" + b.letter + ") ";
+          p.appendChild(label);
+          p.appendChild(makeInput("e3" + b.letter, "blank-sm"));
+        }
+      });
+      container.appendChild(p);
+    });
+  }
+  buildPassage("passage-ex3", ex3Paragraphs);
+
   // ---------- SCREEN NAV ----------
   function showScreen(id){
     document.querySelectorAll(".screen").forEach(function(s){ s.classList.remove("active"); });
@@ -313,10 +447,13 @@
 
   document.getElementById("btnGoEx1").addEventListener("click", function(){ showScreen("screen-ex1"); });
   document.getElementById("btnGoEx2").addEventListener("click", function(){ showScreen("screen-ex2"); });
+  document.getElementById("btnGoEx3").addEventListener("click", function(){ showScreen("screen-ex3"); });
   document.getElementById("btnReviewEx1").addEventListener("click", function(){ renderReview("ex1"); showScreen("screen-ex1-review"); });
   document.getElementById("btnReviewEx2").addEventListener("click", function(){ renderReview("ex2"); showScreen("screen-ex2-review"); });
+  document.getElementById("btnReviewEx3").addEventListener("click", function(){ renderReview("ex3"); showScreen("screen-ex3-review"); });
   document.getElementById("btnBackHome1").addEventListener("click", function(){ showScreen("screen-home"); });
   document.getElementById("btnBackHome2").addEventListener("click", function(){ showScreen("screen-home"); });
+  document.getElementById("btnBackHome3").addEventListener("click", function(){ showScreen("screen-home"); });
 
   // ---------- CHECK ----------
   function normalize(v){ return v.trim().toLowerCase(); }
@@ -392,6 +529,66 @@
     renderReview("ex2"); showScreen("screen-ex2-review");
   });
 
+  // ---------- CHECK EXERCISE 3 (passage) ----------
+  function checkPassage(paragraphs){
+    var correctCount = 0, total = 0;
+    var usedWords = {};
+    var records = [];
+    paragraphs.forEach(function(para){
+      para.parts.forEach(function(part, idx){
+        if(part.blank){
+          total++;
+          var b = part.blank;
+          var id = "e3" + b.letter;
+          var inp = document.getElementById(id);
+          var userVal = inp.value;
+          var isRight = normalize(userVal) === normalize(b.answer);
+          inp.disabled = true;
+          if(isRight){
+            inp.classList.add("correct");
+            correctCount++;
+          } else {
+            inp.classList.add("incorrect");
+            var corr = document.createElement("span");
+            corr.className = "correction";
+            corr.textContent = "(" + b.answer + ")";
+            inp.insertAdjacentElement("afterend", corr);
+          }
+          usedWords[b.answer] = true;
+          var beforeText = (para.parts[idx-1] && para.parts[idx-1].text) ? para.parts[idx-1].text : "";
+          var afterText = (para.parts[idx+1] && para.parts[idx+1].text) ? para.parts[idx+1].text : "";
+          records.push({
+            qnum: b.qnum,
+            letter: b.letter,
+            sentence: (beforeText + "___" + afterText).trim(),
+            given: userVal.trim() === "" ? "(blank)" : userVal.trim(),
+            correct: b.answer,
+            isRight: isRight
+          });
+        }
+      });
+    });
+    Object.keys(usedWords).forEach(function(w){
+      var el = document.getElementById("bankword3-" + w);
+      if(el) el.classList.add("used");
+    });
+    return { correct: correctCount, total: total, records: records };
+  }
+
+  document.getElementById("btnCheck3").addEventListener("click", function(){
+    var result = checkPassage(ex3Paragraphs);
+    ex3Correct = result.correct; ex3Total = result.total; ex3Records = result.records;
+    document.getElementById("score3Note").textContent = ex3Correct + "/" + ex3Total;
+    document.getElementById("btnCheck3").disabled = true;
+    document.getElementById("btnReviewFromEx3").disabled = false;
+    ex3Done = true;
+    updateHomeCards();
+    checkAllDone();
+  });
+  document.getElementById("btnReviewFromEx3").addEventListener("click", function(){
+    renderReview("ex3"); showScreen("screen-ex3-review");
+  });
+
   // ---------- HOMESCREEN UPDATE ----------
   function updateHomeCards(){
     if(ex1Done){
@@ -408,11 +605,18 @@
       document.getElementById("btnGoEx2").disabled = true;
       document.getElementById("btnReviewEx2").style.display = "inline-block";
     }
+    if(ex3Done){
+      document.getElementById("status-ex3").textContent = "Completed: " + ex3Correct + "/" + ex3Total;
+      document.getElementById("status-ex3").classList.add("done");
+      document.getElementById("btnGoEx3").textContent = "Redo (view only)";
+      document.getElementById("btnGoEx3").disabled = true;
+      document.getElementById("btnReviewEx3").style.display = "inline-block";
+    }
   }
 
   // ---------- REVIEW RENDER (ALL questions, right and wrong) ----------
   function renderReview(which){
-    var records = which === "ex1" ? ex1Records : ex2Records;
+    var records = which === "ex1" ? ex1Records : (which === "ex2" ? ex2Records : ex3Records);
     var listEl = document.getElementById("reviewList-" + which);
     listEl.innerHTML = "";
     records.forEach(function(r){
@@ -447,7 +651,7 @@
   }
 
   function checkAllDone(){
-    if(ex1Done && ex2Done){
+    if(ex1Done && ex2Done && ex3Done){
       document.getElementById("allDoneMsg").style.display = "block";
       submitAll();
     }
@@ -459,10 +663,10 @@
 
     var elapsedMs = startTime ? (new Date() - startTime) : 0;
     var timeSpent = formatDuration(elapsedMs);
-    var scoreString = ex1Correct + "/" + ex1Total + ", " + ex2Correct + "/" + ex2Total;
+    var scoreString = ex1Correct + "/" + ex1Total + ", " + ex2Correct + "/" + ex2Total + ", " + ex3Correct + "/" + ex3Total;
 
     var wrongParts = [];
-    ex1Records.concat(ex2Records).forEach(function(r){
+    ex1Records.concat(ex2Records).concat(ex3Records).forEach(function(r){
       if(!r.isRight){
         wrongParts.push(r.qnum + ": " + r.given);
       }
@@ -470,7 +674,7 @@
     var wrongQuestionsList = wrongParts.join(", ");
 
     var payload = {
-      gameName: "Unit 3 Vocabulary - p.26 Ex.1 & 2",
+      gameName: "Unit 3 Vocabulary - pp.26-28 Ex.1-5",
       studentName: nameInput.value.trim(),
       score: scoreString,
       minutesPlayed: timeSpent,
