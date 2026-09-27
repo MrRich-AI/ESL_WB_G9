@@ -439,6 +439,13 @@
   }
 
   // ---------- FINISH / SUBMIT ----------
+  function formatDuration(ms){
+    var totalSeconds = Math.max(0, Math.round(ms / 1000));
+    var mins = Math.floor(totalSeconds / 60);
+    var secs = totalSeconds % 60;
+    return (mins < 10 ? "0" + mins : mins) + ":" + (secs < 10 ? "0" + secs : secs);
+  }
+
   function checkAllDone(){
     if(ex1Done && ex2Done){
       document.getElementById("allDoneMsg").style.display = "block";
@@ -450,7 +457,8 @@
     if(submitted) return;
     submitted = true;
 
-    var minutesPlayed = startTime ? Math.round((new Date() - startTime) / 60000 * 10) / 10 : 0;
+    var elapsedMs = startTime ? (new Date() - startTime) : 0;
+    var timeSpent = formatDuration(elapsedMs);
     var scoreString = ex1Correct + "/" + ex1Total + ", " + ex2Correct + "/" + ex2Total;
 
     var wrongParts = [];
@@ -465,7 +473,7 @@
       gameName: "Unit 3 Vocabulary - p.26 Ex.1 & 2",
       studentName: nameInput.value.trim(),
       score: scoreString,
-      minutesPlayed: minutesPlayed,
+      minutesPlayed: timeSpent,
       wrongQuestions: wrongQuestionsList,
       attempts: 1
     };
