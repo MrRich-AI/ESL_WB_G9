@@ -152,7 +152,7 @@
     </div>
 
     <div class="btn-row">
-      <button id="btnReviewFromEx4" class="secondary" disabled>Review This Exercise &rarr;</button>
+      <button id="btnReviewFromEx4" class="secondary">Submit and Review &rarr;</button>
     </div>
   </div>
 
@@ -255,6 +255,7 @@
       if(data.error){
         statusEl.textContent = "Couldn't get feedback: " + data.error;
         statusEl.classList.add("err");
+        document.getElementById("btnGetFeedback").textContent = "Try again for AI feedback";
         return;
       }
       statusEl.textContent = "";
@@ -262,21 +263,39 @@
       ex4Answers = vals;
       document.getElementById("feedbackBox").style.display = "block";
       document.getElementById("feedbackText").textContent = ex4Feedback;
-      document.getElementById("btnReviewFromEx4").disabled = false;
-      ex4Done = true;
-      checkAllDone();
     })
     .catch(function(err){
       document.getElementById("btnGetFeedback").disabled = false;
       statusEl.textContent = "Connection error — please try again.";
       statusEl.classList.add("err");
+      document.getElementById("btnGetFeedback").textContent = "Try again for AI feedback";
       console.error("AI feedback error", err);
     });
   });
 
   document.getElementById("btnReviewFromEx4").addEventListener("click", function(){
-    renderEx4Review(); showScreen("screen-ex4-review");
+    ex4Answers = ex4Answers || getEx4Values();
+    ex4Done = true;
+    renderEx4Review();
+    showScreen("screen-ex4-review");
+    checkAllDone();
   });
+
+  function buildEx4ResponseDump(vals){
+    var blankOr = function(v){ return v ? v : "(blank)"; };
+    var parts = [
+      "4-Opinion1: " + blankOr(vals.opinions[0]),
+      "4-Opinion2: " + blankOr(vals.opinions[1]),
+      "4-Opinion3: " + blankOr(vals.opinions[2]),
+      "4-Agreement1: " + blankOr(vals.agreements[0]),
+      "4-Agreement2: " + blankOr(vals.agreements[1]),
+      "4-Agreement3: " + blankOr(vals.agreements[2]),
+      "5-Situation1: " + blankOr(vals.dialogues[0]).replace(/\n+/g, " / "),
+      "5-Situation2: " + blankOr(vals.dialogues[1]).replace(/\n+/g, " / "),
+      "5-Situation3: " + blankOr(vals.dialogues[2]).replace(/\n+/g, " / ")
+    ];
+    return parts.join(", ");
+  }
 
   function renderEx4Review(){
     var vals = ex4Answers || getEx4Values();
@@ -291,14 +310,20 @@
     html += "<p><b>Situation 3:</b><br>" + (vals.dialogues[2] ? vals.dialogues[2].replace(/\n/g,"<br>") : "(not written)") + "</p>";
     el.innerHTML = html;
     var fb = document.createElement("div");
-    fb.className = "feedback-box";
-    var lbl = document.createElement("span");
-    lbl.className = "fb-label";
-    lbl.textContent = "Feedback";
-    var txt = document.createElement("span");
-    txt.textContent = ex4Feedback;
-    fb.appendChild(lbl);
-    fb.appendChild(txt);
+    if(ex4Feedback){
+      fb.className = "feedback-box";
+      var lbl = document.createElement("span");
+      lbl.className = "fb-label";
+      lbl.textContent = "Feedback";
+      var txt = document.createElement("span");
+      txt.textContent = ex4Feedback;
+      fb.appendChild(lbl);
+      fb.appendChild(txt);
+    } else {
+      fb.className = "oe-note";
+      fb.style.marginTop = "20px";
+      fb.textContent = "AI feedback was not received for this submission. Your answers have still been recorded.";
+    }
     el.appendChild(fb);
   }
 
@@ -322,13 +347,14 @@
 
     var elapsedMs = startTime ? (new Date() - startTime) : 0;
     var timeSpent = formatDuration(elapsedMs);
+    var vals = ex4Answers || getEx4Values();
 
     var payload = {
       gameName: "Unit 3 Vocabulary - p.28 Ex.4&5",
       studentName: nameInput.value.trim(),
-      score: "Ex4&5: Completed",
+      score: ex4Feedback ? "Ex4&5: Completed" : "Ex4&5: Completed (no AI feedback)",
       minutesPlayed: timeSpent,
-      wrongQuestions: "",
+      wrongQuestions: buildEx4ResponseDump(vals),
       attempts: 1
     };
 
