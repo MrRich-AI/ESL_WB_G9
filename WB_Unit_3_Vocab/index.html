@@ -115,6 +115,7 @@
       <h1>Unit 3 Vocabulary</h1>
       <div class="pagenum">pp. 26 &amp; 27 &middot; Exercises 1 - 3</div>
       <input type="text" id="studentName" placeholder="Enter your name" autocomplete="off">
+      <input type="text" id="studentClass" placeholder="Enter your class" autocomplete="off">
       <button id="btnStart" disabled>Start</button>
     </div>
   </div>
@@ -124,7 +125,7 @@
     <div class="home-header">
       <h1>Unit 3 Vocabulary</h1>
       <div class="pagenum">pp. 26 &amp; 27 &middot; Exercises 1 - 3</div>
-      <div class="student">Student: <span id="homeName"></span></div>
+      <div class="student">Student: <span id="homeName"></span> &middot; Class: <span id="homeClass"></span></div>
     </div>
     <div class="home-cards">
       <div class="card" id="card-ex1">
@@ -438,12 +439,16 @@
   // ---------- START ----------
   var nameInput = document.getElementById("studentName");
   var btnStart = document.getElementById("btnStart");
-  nameInput.addEventListener("input", function(){
-    btnStart.disabled = nameInput.value.trim().length === 0;
-  });
+  var classInput = document.getElementById("studentClass");
+  function updateStartBtn(){
+    btnStart.disabled = !(nameInput.value.trim() && classInput.value.trim());
+  }
+  nameInput.addEventListener("input", updateStartBtn);
+  classInput.addEventListener("input", updateStartBtn);
   btnStart.addEventListener("click", function(){
     startTime = new Date();
     document.getElementById("homeName").textContent = nameInput.value.trim();
+    document.getElementById("homeClass").textContent = classInput.value.trim();
     showScreen("screen-home");
   });
 
@@ -678,6 +683,7 @@
     var payload = {
       gameName: "Unit 3 Vocabulary - pp.26-27 Ex.1-3",
       studentName: nameInput.value.trim(),
+      class: classInput.value.trim(),
       score: scoreString,
       minutesPlayed: timeSpent,
       wrongQuestions: wrongQuestionsList,
