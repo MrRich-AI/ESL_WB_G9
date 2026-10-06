@@ -90,6 +90,7 @@
       <h1>Unit 3 Vocabulary</h1>
       <div class="pagenum">p. 28 &middot; Exercises 4 &amp; 5</div>
       <input type="text" id="studentName" placeholder="Enter your name" autocomplete="off">
+      <input type="text" id="studentClass" placeholder="Enter your class" autocomplete="off">
       <button id="btnStart" disabled>Start</button>
     </div>
   </div>
@@ -144,7 +145,7 @@
       <button id="btnGetFeedback">Get AI Feedback</button>
       <span class="feedback-status" id="feedbackStatus"></span>
     </div>
-    <p class="oe-note">Getting feedback can occasionally take a minute or two if the AI service is busy — please be patient after clicking and avoid clicking more than once.</p>
+    <p class="oe-note">Getting feedback can take up to a minute. Click once, then wait, and please don't close this window.</p>
 
     <div id="feedbackBox" class="feedback-box" style="display:none;">
       <span class="fb-label">Feedback</span>
@@ -154,11 +155,13 @@
     <div class="btn-row">
       <button id="btnReviewFromEx4" class="secondary">Submit and Review &rarr;</button>
     </div>
+    <p class="oe-note" style="margin-top:4px;font-style:normal;font-weight:600;">Your work is not submitted until you click <b>Submit and Review</b>. You can submit with or without AI feedback.</p>
   </div>
 
   <!-- EXERCISE 4 & 5 REVIEW -->
   <div class="screen" id="screen-ex4-review">
     <h1 class="title" style="font-size:32px;">Exercises 4 &amp; 5 — Review</h1>
+    <div class="review-summary" id="studentLine" style="font-weight:600;"></div>
     <div class="review-summary" id="reviewSummary-ex4"></div>
     <div class="all-done">Your responses and feedback have been submitted. You can close this tab now.</div>
   </div>
@@ -170,7 +173,8 @@
 (function(){
 
   var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwEdGlILb09xvDeqX9EZGHXOTqQA8Um7Se0nojnr2vC4ujaGAaV4iz7TwDWB1Pxbf7F2Q/exec';
-  var AI_FEEDBACK_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzwUGt5GinWB0U0vEgUh4cvwwwWbnJblizjpOj6MhelsWflj7cp9SOY4u2eNccGcOH8/exec';
+  /* Gemini feedback proxy (Apps Script holds the API key; we send only the prompt) */
+  var AI_FEEDBACK_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxEXar-cSzm0BnJYp6EYfUo9lKvcgsf5mF9aGSCvVqHqMRiIkYiNqjHaLSqzeHauffGhg/exec';
 
   var startTime = null;
   var submitted = false;
@@ -187,11 +191,15 @@
   // ---------- START ----------
   var nameInput = document.getElementById("studentName");
   var btnStart = document.getElementById("btnStart");
-  nameInput.addEventListener("input", function(){
-    btnStart.disabled = nameInput.value.trim().length === 0;
-  });
+  var classInput = document.getElementById("studentClass");
+  function updateStartBtn(){
+    btnStart.disabled = !(nameInput.value.trim() && classInput.value.trim());
+  }
+  nameInput.addEventListener("input", updateStartBtn);
+  classInput.addEventListener("input", updateStartBtn);
   btnStart.addEventListener("click", function(){
     startTime = new Date();
+    document.getElementById("studentLine").textContent = "Student: " + nameInput.value.trim() + " \u00b7 Class: " + classInput.value.trim();
     showScreen("screen-ex4");
   });
 
@@ -226,7 +234,7 @@
       return;
     }
     statusEl.classList.remove("err");
-    statusEl.textContent = "Getting feedback... this can take a minute or two if the AI service is busy.";
+    statusEl.textContent = "Getting AI feedback\u2026 this can take up to a minute. Please don't close this window.";
     document.getElementById("btnGetFeedback").disabled = true;
 
     var instructions =
@@ -240,33 +248,47 @@
       "Exercise 5 - Situation 2 (test) dialogue:\n" + (vals.dialogues[1] || "(not written)") + "\n\n" +
       "Exercise 5 - Situation 3 (weekend plans) dialogue:\n" + (vals.dialogues[2] || "(not written)");
 
+    var prompt =
+      "You are an experienced, encouraging but honest Cambridge IGCSE ESL teacher giving feedback to a Grade 9 student on a workbook task. " +
+      "Task instructions:\n" + instructions + "\n\n" +
+      "Give specific feedback in simple English (Grade 9 ESL level), written directly to the student. " +
+      "For Exercise 4, say whether each phrase really expresses an opinion or agreement/disagreement, point out any phrase in the wrong column or with an error, and suggest one useful phrase they could add. " +
+      "For each dialogue in Exercise 5, comment on whether it fits the situation, whether it uses expressions of opinion and agreement/disagreement naturally, and name 1-2 specific language errors with corrections (if any). " +
+      "If something was not written, say so briefly. Keep each section to 2-4 sentences.\n\n" +
+      "Student work:\n" + studentWork + "\n\n" +
+      'Respond with ONLY a JSON object, no markdown, no code fences, in exactly this shape: ' +
+      '{"exercise4":"...","situation1":"...","situation2":"...","situation3":"...","overall":"one encouraging next step"}';
+
     fetch(AI_FEEDBACK_ENDPOINT, {
       method: "POST",
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({
-        exerciseName: "Exercises 4 & 5 - Opinion, Agreement & Dialogues",
-        instructions: instructions,
-        studentWork: studentWork
-      })
+      body: JSON.stringify({ prompt: prompt })
     })
-    .then(function(res){ return res.json(); })
+    .then(function(res){
+      if(!res.ok) throw new Error("status " + res.status);
+      return res.json();
+    })
     .then(function(data){
+      if(typeof data === "string") data = JSON.parse(data);
+      if(!data || data.error) throw new Error((data && (data.message || data.error)) || "empty");
+      var sections = [
+        ["Exercise 4 \u2014 your phrases", data.exercise4],
+        ["Exercise 5 \u2014 Situation 1 (sports event)", data.situation1],
+        ["Exercise 5 \u2014 Situation 2 (test)", data.situation2],
+        ["Exercise 5 \u2014 Situation 3 (weekend plans)", data.situation3],
+        ["Next step", data.overall]
+      ].filter(function(x){ return x[1] && String(x[1]).trim(); });
+      if(!sections.length) throw new Error("unreadable");
       document.getElementById("btnGetFeedback").disabled = false;
-      if(data.error){
-        statusEl.textContent = "Couldn't get feedback: " + data.error;
-        statusEl.classList.add("err");
-        document.getElementById("btnGetFeedback").textContent = "Try again for AI feedback";
-        return;
-      }
+      document.getElementById("btnGetFeedback").textContent = "Get AI Feedback";
       statusEl.textContent = "";
-      ex4Feedback = data.feedback || "";
+      ex4Feedback = sections.map(function(x){ return x[0] + ":\n" + String(x[1]).trim(); }).join("\n\n");
       ex4Answers = vals;
       document.getElementById("feedbackBox").style.display = "block";
       document.getElementById("feedbackText").textContent = ex4Feedback;
     })
     .catch(function(err){
       document.getElementById("btnGetFeedback").disabled = false;
-      statusEl.textContent = "Connection error — please try again.";
+      statusEl.textContent = "AI feedback isn't available right now. You can try again, or click Submit and Review \u2014 your work will still be sent to your teacher.";
       statusEl.classList.add("err");
       document.getElementById("btnGetFeedback").textContent = "Try again for AI feedback";
       console.error("AI feedback error", err);
@@ -352,6 +374,7 @@
     var payload = {
       gameName: "Unit 3 Vocabulary - p.28 Ex.4&5",
       studentName: nameInput.value.trim(),
+      class: classInput.value.trim(),
       score: ex4Feedback ? "Ex4&5: Completed" : "Ex4&5: Completed (no AI feedback)",
       minutesPlayed: timeSpent,
       wrongQuestions: buildEx4ResponseDump(vals),
