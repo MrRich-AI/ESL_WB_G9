@@ -154,6 +154,26 @@
     color:var(--ink-soft);
     font-size:1.3rem;
   }
+  .backbtn{
+    display:inline-block;
+    align-self:flex-start;
+    font-family:inherit;
+    font-size:1rem;
+    color:var(--ink);
+    background:var(--card);
+    border:1px solid var(--border-dark);
+    border-radius:4px;
+    padding:6px 14px;
+    margin-bottom:6px;
+    cursor:pointer;
+    text-decoration:none;
+  }
+  .backbtn:hover{ background:var(--card-hover); }
+  .unitnum{
+    font-size:1.25rem;
+    font-weight:700;
+    color:var(--ink-soft);
+  }
   footer{
     text-align:center;
     color:var(--ink-soft);
@@ -171,14 +191,14 @@
 <header>
   <h1>IGCSE ESL Workbook Exercises</h1>
   <h2>Grade 9</h2>
-  <p>Select the exercises below</p>
+  <p id="subtitle">Select a unit</p>
 </header>
 
 <div class="grid" id="gameGrid">
   <p id="status" style="color:var(--ink-soft);text-align:center;font-style:italic;">Loading exercises…</p>
 </div>
 
-<footer>Tap an exercise to begin</footer>
+<footer id="footer">Tap a unit to see its exercises</footer>
 
 <script>
   // ---- CONFIG: your GitHub username/org and repo name ----
@@ -195,52 +215,128 @@
     '<path d="M3 12h18"/><path d="M9 6l-6 6 6 6"/><path d="M15 6l6 6-6 6"/>'
   ];
 
-  function prettyName(folder) {
-    return folder
-      .trim()
-      .replace(/^Unit[_\s]?/i, "Unit ")
-      .replace(/_/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
+  // ---- Parse a folder name like "Unit_3_WB_Writing_A_p32" or "WB_Unit_3_Vocab_2" ----
+  const SECTIONS = [
+    { key: /Vocab/i,          name: "Vocabulary",     order: 1 },
+    { key: /LangFocus/i,      name: "Language Focus", order: 2 },
+    { key: /Reading/i,        name: "Reading",        order: 3 },
+    { key: /Writing/i,        name: "Writing",        order: 4 },
+    { key: /Listening/i,      name: "Listening",      order: 5 },
+    { key: /Speaking/i,       name: "Speaking",       order: 6 },
+    { key: /Essay/i,          name: "Essay",          order: 7 }
+  ];
+
+  // Older folders whose names don't include page numbers
+  const PAGE_OVERRIDES = { "WB_Unit_3_Vocab": "pp. 26-27", "WB_Unit_3_Vocab_2": "p. 28" };
+
+  function parseFolder(folder) {
+    const m = folder.match(/Unit[_\s]?(\d+)/i);
+    const unit = m ? parseInt(m[1], 10) : null;
+    let rest = folder.replace(/^WB_/i, "").replace(/Unit[_\s]?\d+_?/i, "");
+    const book = /(^|_)CB(_|$)/i.test(rest) ? "Coursebook" : "Workbook";
+    rest = rest.replace(/(^|_)(WB|CB)(_|$)/gi, "_").replace(/^_+|_+$/g, "");
+
+    let pages = "";
+    const pm = rest.match(/_?(pp?)(\d+(?:-\d+)?)$/i);
+    if (pm) {
+      pages = (pm[1].toLowerCase() === "pp" ? "pp. " : "p. ") + pm[2];
+      rest = rest.slice(0, pm.index);
+    }
+
+    if (!pages && PAGE_OVERRIDES[folder]) pages = PAGE_OVERRIDES[folder];
+    let section = null;
+    for (const s of SECTIONS) { if (s.key.test(rest)) { section = s; break; } }
+    let part = "";
+    const partMatch = rest.match(/_([A-Z]|\d+)$/);
+    if (partMatch) part = partMatch[1];
+
+    const title = section
+      ? section.name + (part ? " " + part : "")
+      : rest.replace(/_/g, " ").trim() || folder;
+    const sub = [book, pages].filter(Boolean).join(" \u00b7 ");
+
+    return {
+      folder, unit, title, sub,
+      order: section ? section.order : 99,
+      part: part || "0"
+    };
+  }
+
+  function card(href, iconIdx, name, sub, onClick) {
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = href;
+    if (onClick) a.addEventListener('click', onClick);
+    a.innerHTML = `
+      <div class="icon"><svg viewBox="0 0 24 24">${icons[iconIdx % icons.length]}</svg></div>
+      <div class="label">
+        <div class="name">${name}</div>
+        ${sub ? `<div class="sub">${sub}</div>` : ""}
+      </div>
+      <div class="arrow">›</div>`;
+    return a;
+  }
+
+  let ALL = [];
+
+  function render() {
+    const grid = document.getElementById('gameGrid');
+    const subtitle = document.getElementById('subtitle');
+    const footer = document.getElementById('footer');
+    grid.innerHTML = "";
+
+    const hm = location.hash.match(/^#unit-(\d+)$/);
+    const chosen = hm ? parseInt(hm[1], 10) : null;
+
+    if (chosen !== null) {
+      // ---- One unit: list its exercises ----
+      const list = ALL.filter(x => x.unit === chosen)
+        .sort((a, b) => a.order - b.order || a.part.localeCompare(b.part, undefined, { numeric: true }) || a.folder.localeCompare(b.folder));
+      subtitle.textContent = "Unit " + chosen;
+      footer.textContent = "Tap an exercise to begin";
+      const back = document.createElement('a');
+      back.className = 'backbtn';
+      back.href = '#';
+      back.textContent = '\u2190 All units';
+      grid.appendChild(back);
+      if (list.length === 0) {
+        const p = document.createElement('p');
+        p.textContent = "No exercises found for this unit.";
+        grid.appendChild(p);
+      }
+      list.forEach((x, i) => grid.appendChild(card(encodeURI(x.folder + '/index.html'), i, x.title, x.sub)));
+      return;
+    }
+
+    // ---- All units, newest (highest number) first ----
+    subtitle.textContent = "Select a unit";
+    footer.textContent = "Tap a unit to see its exercises";
+    const units = {};
+    const other = [];
+    ALL.forEach(x => { if (x.unit === null) other.push(x); else (units[x.unit] = units[x.unit] || []).push(x); });
+    Object.keys(units).map(Number).sort((a, b) => b - a).forEach((u, i) => {
+      const n = units[u].length;
+      grid.appendChild(card('#unit-' + u, i, 'Unit ' + u, n + (n === 1 ? ' exercise' : ' exercises')));
+    });
+    other.forEach((x, i) => grid.appendChild(card(encodeURI(x.folder + '/index.html'), i, x.title, x.folder)));
+    if (!Object.keys(units).length && !other.length) {
+      const p = document.createElement('p');
+      p.textContent = "No exercises found yet.";
+      grid.appendChild(p);
+    }
   }
 
   async function loadGames() {
-    const grid = document.getElementById('gameGrid');
     const status = document.getElementById('status');
-
     try {
       const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/`);
       if (!res.ok) throw new Error("GitHub API error " + res.status);
       const items = await res.json();
-
-      const folders = items
-        .filter(item => item.type === "dir" && !EXCLUDE.includes(item.name))
-        .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" }));
-
-      if (folders.length === 0) {
-        status.textContent = "No exercises found yet.";
-        return;
-      }
-
-      status.remove();
-
-      folders.forEach((folder, i) => {
-        const a = document.createElement('a');
-        a.className = 'card';
-        a.href = encodeURI(folder.name + '/index.html');
-
-        a.innerHTML = `
-          <div class="icon">
-            <svg viewBox="0 0 24 24">${icons[i % icons.length]}</svg>
-          </div>
-          <div class="label">
-            <div class="name">${prettyName(folder.name)}</div>
-            <div class="sub">${folder.name}</div>
-          </div>
-          <div class="arrow">›</div>
-        `;
-        grid.appendChild(a);
-      });
+      ALL = items
+        .filter(item => item.type === "dir" && !EXCLUDE.includes(item.name) && !item.name.startsWith("."))
+        .map(item => parseFolder(item.name));
+      render();
+      window.addEventListener('hashchange', () => { render(); window.scrollTo(0, 0); });
     } catch (err) {
       status.textContent = "Couldn't load exercises (GitHub API may be rate-limited). Try refreshing in a bit.";
       console.error(err);
