@@ -217,6 +217,7 @@
 
   // ---- Parse a folder name like "Unit_3_WB_Writing_A_p32" or "WB_Unit_3_Vocab_2" ----
   const SECTIONS = [
+    { key: /Exam/i,           name: "Exam-Style Question", order: 8 },
     { key: /Vocab/i,          name: "Vocabulary",     order: 1 },
     { key: /LangFocus/i,      name: "Language Focus", order: 2 },
     { key: /Reading/i,        name: "Reading",        order: 3 },
@@ -250,8 +251,13 @@
     const partMatch = rest.match(/_([A-Z]|\d+)$/);
     if (partMatch) part = partMatch[1];
 
+    let skill = "";
+    if (section && section.order === 8) {
+      const sk = SECTIONS.find(x => x.order !== 8 && x.key.test(rest));
+      if (sk) skill = ": " + sk.name;
+    }
     const title = section
-      ? section.name + (part ? " " + part : "")
+      ? section.name + skill + (part ? " " + part : "")
       : rest.replace(/_/g, " ").trim() || folder;
     const sub = [book, pages].filter(Boolean).join(" \u00b7 ");
 
