@@ -7,6 +7,12 @@ Richard Imbeau, IGCSE ESL teacher (Grade 9: 9A1, 9A2, 9A3; Grade 10: 10A1) at Ro
 ## General
 - If a request seems to contradict or clash with these rules, ask for clarification before building anything.
 
+## Pick the rule set first
+- Richard names the build type in the request: **WB** or **ESSAY**. If the type isn't stated, ask before building.
+- WB builds follow the WB rule set and submit only via the WB data submission template (WB Data Collector).
+- ESSAY builds follow the Essay HTML rule set and submit only via the Essay data submission template (Essay Data).
+- Never include both endpoints in one build.
+
 ## Repos and layout
 - Grade 9 builds go in **ESL_WB_G9**; Grade 10 builds go in **ESL_WB_G10** (owner mrrich-ai).
 - Each build is a single self-contained `index.html` in its own folder, following the existing folder naming (e.g. `Unit_3_WB_LangFocus_A_pp29-30`, `Unit_13_WB_Reading_B_p130`).
