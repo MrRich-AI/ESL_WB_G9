@@ -28,6 +28,7 @@ Richard Imbeau, IGCSE ESL teacher (Grade 9: 9A1, 9A2, 9A3; Grade 10: 10A1) at Ro
 
 ## WB rule set
 - **Layout:** widescreen/laptop (landscape, multi-column allowed, one activity/screen at a time, no horizontal scrolling; vertical scrolling fine for longer content).
+- **Tablets:** every screen must scroll by touch. Pin each activity's button row (Check answers / Finish activity / Submit / Back to home) to the bottom of the screen with `position:sticky; bottom:0` on an opaque bar. Put `overflow-x:hidden` on `html` only, never on `body`: a body-level overflow makes `body` a scroll container and stops sticky from working. Add a floating "Scroll down for more ↓" hint that shows while content continues below the screen, hides at the bottom, and scrolls down when tapped.
 - **Visual style:** match the uploaded image/photo's style. High contrast text-to-background throughout.
 - **Order:** keep the book's question order (no question shuffle). Multiple-choice answer order is still shuffled.
 - **Structure:** homescreen with selectable activities (builds typically have 4–7) and progress tracked per activity. When one uploaded image is split into several activities, each is its own activity (own review screen, own Review button).
