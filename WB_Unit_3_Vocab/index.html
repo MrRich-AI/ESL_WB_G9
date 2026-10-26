@@ -103,6 +103,11 @@
   .passage-para b{ font-weight:700; }
   input.blank.blank-sm{ min-width:110px; }
 
+
+  /* Tablet: keep the activity buttons pinned to the bottom of the screen while scrolling */
+  .pinbar{position:sticky;bottom:0;z-index:20;margin-top:30px;padding:12px 0;display:flex;flex-wrap:wrap;gap:14px;align-items:center;background:#d2d2d2;border-top:2px solid var(--border)}
+  .pinbar .btn-row{margin-top:0}
+  .pinbar .oe-note{flex-basis:100%;margin:0}
 </style>
 </head>
 <body>
@@ -162,6 +167,7 @@
     <p class="instr"><b>1</b> &nbsp;Read the sentences. Replace the <b>bold</b> words or phrases with a word from the box.</p>
     <div class="wordbank" id="bank-ex1"></div>
     <div id="items-ex1"></div>
+    <div class="pinbar">
     <div class="btn-row">
       <button id="btnCheck1">Check Answers</button>
       <span class="score-note" id="score1Note"></span>
@@ -169,13 +175,14 @@
     <div class="btn-row">
       <button id="btnReviewFromEx1" class="secondary" disabled>Review This Exercise &rarr;</button>
     </div>
+    </div>
   </div>
 
   <!-- EXERCISE 1 REVIEW -->
   <div class="screen" id="screen-ex1-review">
     <h1 class="title" style="font-size:32px;">Exercise 1 — Review</h1>
     <div class="review-list" id="reviewList-ex1"></div>
-    <div class="btn-row">
+    <div class="btn-row pinbar">
       <button id="btnBackHome1">Back to Home</button>
     </div>
   </div>
@@ -186,6 +193,7 @@
     <p class="instr"><b>2</b> &nbsp;Choose words from the box to complete the sentences.</p>
     <div class="wordbank" id="bank-ex2"></div>
     <div id="items-ex2"></div>
+    <div class="pinbar">
     <div class="btn-row">
       <button id="btnCheck2">Check Answers</button>
       <span class="score-note" id="score2Note"></span>
@@ -193,13 +201,14 @@
     <div class="btn-row">
       <button id="btnReviewFromEx2" class="secondary" disabled>Review This Exercise &rarr;</button>
     </div>
+    </div>
   </div>
 
   <!-- EXERCISE 2 REVIEW -->
   <div class="screen" id="screen-ex2-review">
     <h1 class="title" style="font-size:32px;">Exercise 2 — Review</h1>
     <div class="review-list" id="reviewList-ex2"></div>
-    <div class="btn-row">
+    <div class="btn-row pinbar">
       <button id="btnBackHome2">Back to Home</button>
     </div>
   </div>
@@ -210,6 +219,7 @@
     <p class="instr"><b>3</b> &nbsp;Read this review of a restaurant. Choose adjectives from the box to fill each gap. In some cases, more than one adjective is possible, but try to use each adjective only once.</p>
     <div class="wordbank" id="bank-ex3"></div>
     <div id="passage-ex3"></div>
+    <div class="pinbar">
     <div class="btn-row">
       <button id="btnCheck3">Check Answers</button>
       <span class="score-note" id="score3Note"></span>
@@ -217,13 +227,14 @@
     <div class="btn-row">
       <button id="btnReviewFromEx3" class="secondary" disabled>Review This Exercise &rarr;</button>
     </div>
+    </div>
   </div>
 
   <!-- EXERCISE 3 REVIEW -->
   <div class="screen" id="screen-ex3-review">
     <h1 class="title" style="font-size:32px;">Exercise 3 — Review</h1>
     <div class="review-list" id="reviewList-ex3"></div>
-    <div class="btn-row">
+    <div class="btn-row pinbar">
       <button id="btnBackHome3">Back to Home</button>
     </div>
   </div>
@@ -705,6 +716,38 @@
     } catch(e){ console.error("submitGameData error", e); }
   }
 
+})();
+</script>
+
+<!-- Tablet scroll aid: floating "Scroll down for more" hint, shown while content continues below the screen -->
+<style>
+#scrollHint{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:50;display:none;margin:0;width:auto;font-family:inherit;font-size:15px;font-weight:600;line-height:1;padding:10px 18px;border:2px solid #fff;border-radius:22px;background:#151515;color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.35);cursor:pointer;animation:hintBob 1.6s ease-in-out infinite}
+#scrollHint.show{display:block}
+@keyframes hintBob{0%,100%{transform:translateX(-50%)}50%{transform:translate(-50%,4px)}}
+</style>
+<button type="button" id="scrollHint">Scroll down for more &darr;</button>
+<script>
+(function(){
+  var hint = document.getElementById('scrollHint'), queued = false;
+  function update(){
+    queued = false;
+    var se = document.scrollingElement || document.documentElement;
+    var left = se.scrollHeight - (window.innerHeight + window.scrollY);
+    var scr = document.querySelector('.screen.active');
+    var bar = scr && scr.querySelector('.actfoot, .pinbar');
+    var bottom = ((bar && bar.offsetParent) ? Math.round(bar.getBoundingClientRect().height) : 0) + 14 + 'px';
+    if (hint.style.bottom !== bottom) hint.style.bottom = bottom;
+    var show = left > 40;
+    if (hint.classList.contains('show') !== show) hint.classList.toggle('show', show);
+  }
+  function request(){ if (!queued){ queued = true; requestAnimationFrame(update); } }
+  hint.addEventListener('click', function(){ window.scrollBy({ top: Math.round(window.innerHeight * 0.7), behavior: 'smooth' }); });
+  window.addEventListener('scroll', request, { passive: true });
+  window.addEventListener('resize', request);
+  new MutationObserver(function(muts){
+    for (var i = 0; i < muts.length; i++) if (muts[i].target !== hint){ request(); return; }
+  }).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['class', 'style', 'hidden'] });
+  request();
 })();
 </script>
 </body>

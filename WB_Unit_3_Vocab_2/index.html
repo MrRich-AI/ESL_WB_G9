@@ -78,6 +78,11 @@
   .feedback-box .fb-label{ font-weight:700; color:var(--correct); margin-bottom:8px; display:block; }
   .review-summary{ max-width:820px; margin:0 auto 24px auto; font-size:16px; line-height:1.7; }
   .review-summary h3{ font-size:17px; margin:18px 0 6px 0; }
+
+  /* Tablet: keep the activity buttons pinned to the bottom of the screen while scrolling */
+  .pinbar{position:sticky;bottom:0;z-index:20;margin-top:30px;padding:12px 0;display:flex;flex-wrap:wrap;gap:14px;align-items:center;background:#d2d2d2;border-top:2px solid var(--border)}
+  .pinbar .btn-row{margin-top:0}
+  .pinbar .oe-note{flex-basis:100%;margin:0}
 </style>
 </head>
 <body>
@@ -152,10 +157,12 @@
       <span id="feedbackText"></span>
     </div>
 
+    <div class="pinbar">
     <div class="btn-row">
       <button id="btnReviewFromEx4" class="secondary">Submit and Review &rarr;</button>
     </div>
     <p class="oe-note" style="margin-top:4px;font-style:normal;font-weight:600;">Your work is not submitted until you click <b>Submit and Review</b>. You can submit with or without AI feedback.</p>
+    </div>
   </div>
 
   <!-- EXERCISE 4 & 5 REVIEW -->
@@ -396,6 +403,38 @@
     } catch(e){ console.error("submitGameData error", e); }
   }
 
+})();
+</script>
+
+<!-- Tablet scroll aid: floating "Scroll down for more" hint, shown while content continues below the screen -->
+<style>
+#scrollHint{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:50;display:none;margin:0;width:auto;font-family:inherit;font-size:15px;font-weight:600;line-height:1;padding:10px 18px;border:2px solid #fff;border-radius:22px;background:#151515;color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.35);cursor:pointer;animation:hintBob 1.6s ease-in-out infinite}
+#scrollHint.show{display:block}
+@keyframes hintBob{0%,100%{transform:translateX(-50%)}50%{transform:translate(-50%,4px)}}
+</style>
+<button type="button" id="scrollHint">Scroll down for more &darr;</button>
+<script>
+(function(){
+  var hint = document.getElementById('scrollHint'), queued = false;
+  function update(){
+    queued = false;
+    var se = document.scrollingElement || document.documentElement;
+    var left = se.scrollHeight - (window.innerHeight + window.scrollY);
+    var scr = document.querySelector('.screen.active');
+    var bar = scr && scr.querySelector('.actfoot, .pinbar');
+    var bottom = ((bar && bar.offsetParent) ? Math.round(bar.getBoundingClientRect().height) : 0) + 14 + 'px';
+    if (hint.style.bottom !== bottom) hint.style.bottom = bottom;
+    var show = left > 40;
+    if (hint.classList.contains('show') !== show) hint.classList.toggle('show', show);
+  }
+  function request(){ if (!queued){ queued = true; requestAnimationFrame(update); } }
+  hint.addEventListener('click', function(){ window.scrollBy({ top: Math.round(window.innerHeight * 0.7), behavior: 'smooth' }); });
+  window.addEventListener('scroll', request, { passive: true });
+  window.addEventListener('resize', request);
+  new MutationObserver(function(muts){
+    for (var i = 0; i < muts.length; i++) if (muts[i].target !== hint){ request(); return; }
+  }).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['class', 'style', 'hidden'] });
+  request();
 })();
 </script>
 </body>

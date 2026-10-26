@@ -14,7 +14,8 @@
   --ok:#17692f; --okbg:#e5f3e9; --bad:#a8231b; --badbg:#fbeae8; --soft:#f3f3f3;
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;overflow-x:hidden}
+html,body{margin:0;padding:0}
+html{overflow-x:hidden}
 body{background:var(--desk);font-family:'Source Sans 3',Arial,Helvetica,sans-serif;color:var(--ink);font-size:18px;line-height:1.5}
 .page{max-width:1120px;margin:24px auto;background:var(--page);box-shadow:0 3px 14px rgba(0,0,0,.2);min-height:calc(100vh - 48px);padding-bottom:40px}
 .band{background:linear-gradient(#a2a2a2 0%,#cfcfcf 40%,#f2f2f2 80%,#fff 100%);padding:36px 56px 22px}
@@ -177,6 +178,9 @@ body{background:var(--desk);font-family:'Source Sans 3',Arial,Helvetica,sans-ser
   .chipbox,.ltable,.example,.hint{margin-left:0}
   .ltable .td{min-height:160px}
 }
+
+/* Tablet: keep the activity buttons pinned to the bottom of the screen while scrolling */
+.actfoot{position:sticky;bottom:0;z-index:20;background:var(--page);padding:12px 0;border-top:1.5px solid #333}
 </style>
 </head>
 <body>
@@ -711,6 +715,38 @@ function sendResults(){
   });
 }
 $('btnResend').addEventListener('click', function(){ if (!submitted && !submitting) sendResults(); });
+</script>
+
+<!-- Tablet scroll aid: floating "Scroll down for more" hint, shown while content continues below the screen -->
+<style>
+#scrollHint{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:50;display:none;margin:0;width:auto;font-family:inherit;font-size:15px;font-weight:600;line-height:1;padding:10px 18px;border:2px solid #fff;border-radius:22px;background:#151515;color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.35);cursor:pointer;animation:hintBob 1.6s ease-in-out infinite}
+#scrollHint.show{display:block}
+@keyframes hintBob{0%,100%{transform:translateX(-50%)}50%{transform:translate(-50%,4px)}}
+</style>
+<button type="button" id="scrollHint">Scroll down for more &darr;</button>
+<script>
+(function(){
+  var hint = document.getElementById('scrollHint'), queued = false;
+  function update(){
+    queued = false;
+    var se = document.scrollingElement || document.documentElement;
+    var left = se.scrollHeight - (window.innerHeight + window.scrollY);
+    var scr = document.querySelector('.screen.active');
+    var bar = scr && scr.querySelector('.actfoot, .pinbar');
+    var bottom = ((bar && bar.offsetParent) ? Math.round(bar.getBoundingClientRect().height) : 0) + 14 + 'px';
+    if (hint.style.bottom !== bottom) hint.style.bottom = bottom;
+    var show = left > 40;
+    if (hint.classList.contains('show') !== show) hint.classList.toggle('show', show);
+  }
+  function request(){ if (!queued){ queued = true; requestAnimationFrame(update); } }
+  hint.addEventListener('click', function(){ window.scrollBy({ top: Math.round(window.innerHeight * 0.7), behavior: 'smooth' }); });
+  window.addEventListener('scroll', request, { passive: true });
+  window.addEventListener('resize', request);
+  new MutationObserver(function(muts){
+    for (var i = 0; i < muts.length; i++) if (muts[i].target !== hint){ request(); return; }
+  }).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['class', 'style', 'hidden'] });
+  request();
+})();
 </script>
 </body>
 </html>
