@@ -284,7 +284,7 @@ body{background:var(--desk);font-family:'Source Sans 3',Arial,Helvetica,sans-ser
 <script>
 /* ===================== DATA ===================== */
 var GAME_NAME = 'Unit 3 WB Language Focus A Ex. 1-3 pp. 29-30';
-var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwEdGlILb09xvDeqX9EZGHXOTqQA8Um7Se0nojnr2vC4ujaGAaV4iz7TwDWB1Pxbf7F2Q/exec';
+var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyLjj5ycXstxQyBeTXP6BGKuSqypnchRKtupVwvb4J7z-ydtruHviiomTw6NTcknYKL/exec';
 
 var COLS = [
   {id:'seq', name:'Sequence'},
@@ -674,12 +674,21 @@ function showResults(){
   if (!submitted && !submitting) sendResults();
 }
 
+/* Wrong Answers for the WB Data Collector: one line per exercise ("Ex.1: ..."), items separated by commas.
+   Wrong answers are "label student answer -> correct answer" (the sheet shows the correct answer in bold red);
+   open-ended answers are always sent, with an [AI ✓] / [AI ✗] tag. */
+function first_(a){ return Array.isArray(a) ? a[0] : a; }
+function flat_(v){ return String(v === undefined || v === null ? '' : v).replace(/\s+/g, ' ').trim(); }
+function exLines_(groups){ return groups.filter(function(g){ return g[1].length; }).map(function(g){ return 'Ex.' + g[0] + ': ' + g[1].join(', '); }); }
+function wrongItem_(label, given, correct){ return (label ? label + ' ' : '') + (flat_(given) || '(blank)') + ' → ' + flat_(correct).replace(/,/g, ''); }
+function openItem_(label, text, r){ return (label ? label + ' ' : '') + (flat_(text) || '(blank)') + (r ? ' [AI ' + (r.correct ? '✓' : '✗') + ']' : ' [no AI feedback]'); }
+
 function buildWrongList(){
-  var out = [];
-  A1_WORDS.forEach(function(w){ var r = S[0].res[w]; if (r && !r.ok) out.push('1 ' + w + ': ' + colName(r.given)); });
-  S[1].res.forEach(function(r){ if (!r.ok) out.push('2 ' + colName(r.col) + ': ' + r.val); });
-  A3.forEach(function(it, k){ var r = S[2].res[k]; if (r && !r.ok) out.push('3' + it.l + ': ' + r.given); });
-  return out.join(', ');
+  var e1 = [], e2 = [], e3 = [];
+  A1_WORDS.forEach(function(w){ var r = S[0].res[w]; if (r && !r.ok) e1.push(wrongItem_(w, colName(r.given) || '(not placed)', colName(KEY1[w]))); });
+  S[1].res.forEach(function(r){ if (!r.ok) e2.push(wrongItem_(colName(r.col) + ' ' + (r.slot + 1), r.val, 'any new ' + colName(r.col).toLowerCase() + ' linker')); });
+  A3.forEach(function(it, k){ var r = S[2].res[k]; if (r && !r.ok) e3.push(wrongItem_(it.l, r.given, first_(it.ans))); });
+  return exLines_([[1, e1], [2, e2], [3, e3]]);
 }
 
 function submitGameData(data){

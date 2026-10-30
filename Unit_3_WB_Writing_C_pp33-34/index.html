@@ -362,7 +362,7 @@ input.gap.bad{border-bottom-color:var(--bad);color:var(--bad);font-weight:700;ba
 var ACTIVITY_NAME = 'Unit 3 WB Writing C Ex. 5 & 6 pp. 33-34';
 /* Gemini feedback proxy (Apps Script holds the API key; we send only the prompt) */
 var FEEDBACK_PROXY_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxEXar-cSzm0BnJYp6EYfUo9lKvcgsf5mF9aGSCvVqHqMRiIkYiNqjHaLSqzeHauffGhg/exec';
-var ESSAY_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwNhsD9-6Zxcm9zz2Rq3uCwx8jxbu3KPYcLULLtjV85zPoUsCmAp5xcNnXepWfOitUSBA/exec';
+var ESSAY_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw4wtgPJ7VzRGWR3zhEtggTOKbb1WpjBCejIrFnkkig3AF7-5S5-SGeMDlHjy8wReayVw/exec';
 
 var HEADS = [
   {id:'loc', name:'The location of the festival:'},
@@ -397,6 +397,7 @@ function show(id){
   $(id).classList.add('active');
   window.scrollTo(0,0);
 }
+var WORD_MIN = 120, WORD_MAX = 160, pasteCount = 0;   /* pasting allowed, but counted and sent to the teacher */
 function words(t){ t = String(t||'').trim(); return t ? t.split(/\s+/).length : 0; }
 function notesCount(){ var n = 0; for (var k in notes) if (String(notes[k]).trim()) n++; return n; }
 
@@ -521,6 +522,8 @@ function render6(){
   $('actBody').innerHTML = h + '</div>';
   var ta = $('essay');
   ta.addEventListener('input', function(){ st.essay = ta.value; updateFoot(); });
+  ta.addEventListener('paste', function(e){ var c = e.clipboardData || window.clipboardData; if (c && String(c.getData('text')).trim()) pasteCount++; });
+  ta.addEventListener('drop', function(){ pasteCount++; });
   var b = $('btnAI'); if (b) b.onclick = getAIFeedback;
 }
 
@@ -635,7 +638,10 @@ function sendResults(){
       duration: durationText,
       score: scoreText,
       feedback: feedbackText,
-      essayResponse: S[1].essay.trim()
+      essayResponse: S[1].essay.trim(),
+      wordMin: WORD_MIN,
+      wordMax: WORD_MAX,
+      pasted: pasteCount
     })
   }).then(function(res){
     submitted = true; submitting = false;

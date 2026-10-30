@@ -179,7 +179,7 @@
 <script>
 (function(){
 
-  var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwEdGlILb09xvDeqX9EZGHXOTqQA8Um7Se0nojnr2vC4ujaGAaV4iz7TwDWB1Pxbf7F2Q/exec';
+  var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyLjj5ycXstxQyBeTXP6BGKuSqypnchRKtupVwvb4J7z-ydtruHviiomTw6NTcknYKL/exec';
   /* Gemini feedback proxy (Apps Script holds the API key; we send only the prompt) */
   var AI_FEEDBACK_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxEXar-cSzm0BnJYp6EYfUo9lKvcgsf5mF9aGSCvVqHqMRiIkYiNqjHaLSqzeHauffGhg/exec';
 
@@ -310,20 +310,22 @@
     checkAllDone();
   });
 
+  /* Wrong Answers for the WB Data Collector: one line per exercise ("Ex.1: ..."), items separated by commas.
+     Wrong answers are "label student answer -> correct answer" (the sheet shows the correct answer in bold red);
+     open-ended answers are always sent, with an [AI ✓] / [AI ✗] tag. */
+  function first_(a){ return Array.isArray(a) ? a[0] : a; }
+  function flat_(v){ return String(v === undefined || v === null ? '' : v).replace(/\s+/g, ' ').trim(); }
+  function exLines_(groups){ return groups.filter(function(g){ return g[1].length; }).map(function(g){ return 'Ex.' + g[0] + ': ' + g[1].join(', '); }); }
+  function wrongItem_(label, given, correct){ return (label ? label + ' ' : '') + (flat_(given) || '(blank)') + ' → ' + flat_(correct).replace(/,/g, ''); }
+  function openItem_(label, text, r){ return (label ? label + ' ' : '') + (flat_(text) || '(blank)') + (r ? ' [AI ' + (r.correct ? '✓' : '✗') + ']' : ' [no AI feedback]'); }
+
   function buildEx4ResponseDump(vals){
-    var blankOr = function(v){ return v ? v : "(blank)"; };
-    var parts = [
-      "4-Opinion1: " + blankOr(vals.opinions[0]),
-      "4-Opinion2: " + blankOr(vals.opinions[1]),
-      "4-Opinion3: " + blankOr(vals.opinions[2]),
-      "4-Agreement1: " + blankOr(vals.agreements[0]),
-      "4-Agreement2: " + blankOr(vals.agreements[1]),
-      "4-Agreement3: " + blankOr(vals.agreements[2]),
-      "5-Situation1: " + blankOr(vals.dialogues[0]).replace(/\n+/g, " / "),
-      "5-Situation2: " + blankOr(vals.dialogues[1]).replace(/\n+/g, " / "),
-      "5-Situation3: " + blankOr(vals.dialogues[2]).replace(/\n+/g, " / ")
+    var item = function(label, v){ return label + ' ' + (flat_(String(v || '').replace(/\n+/g, ' / ')).replace(/,/g, ';') || '(blank)'); };
+    return [
+      'Ex.4: ' + [0, 1, 2].map(function(k){ return item('Opinion ' + (k + 1), vals.opinions[k]); })
+        .concat([0, 1, 2].map(function(k){ return item('Agreement ' + (k + 1), vals.agreements[k]); })).join(', '),
+      'Ex.5: ' + [0, 1, 2].map(function(k){ return item('Situation ' + (k + 1), vals.dialogues[k]); }).join(', ')
     ];
-    return parts.join(", ");
   }
 
   function renderEx4Review(){

@@ -361,7 +361,7 @@ input.gap.bad{border-bottom-color:var(--bad);color:var(--bad);font-weight:700;ba
 <script>
 /* ===================== CONFIG ===================== */
 var GAME_NAME = 'Unit 3 WB Writing B Ex. 3 & 4 pp. 32-33';
-var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwEdGlILb09xvDeqX9EZGHXOTqQA8Um7Se0nojnr2vC4ujaGAaV4iz7TwDWB1Pxbf7F2Q/exec';
+var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyLjj5ycXstxQyBeTXP6BGKuSqypnchRKtupVwvb4J7z-ydtruHviiomTw6NTcknYKL/exec';
 /* Gemini feedback proxy (Apps Script holds the API key; we send only the prompt) */
 var FEEDBACK_PROXY_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxEXar-cSzm0BnJYp6EYfUo9lKvcgsf5mF9aGSCvVqHqMRiIkYiNqjHaLSqzeHauffGhg/exec';
 
@@ -697,14 +697,20 @@ function showResults(){
 }
 
 /* Activity 3: every answer always sent as plain data, with the AI verdict if there was one. Activity 4: only missed answers. */
+/* Wrong Answers for the WB Data Collector: one line per exercise ("Ex.1: ..."), items separated by commas.
+   Wrong answers are "label student answer -> correct answer" (the sheet shows the correct answer in bold red);
+   open-ended answers are always sent, with an [AI ✓] / [AI ✗] tag. */
+function first_(a){ return Array.isArray(a) ? a[0] : a; }
+function flat_(v){ return String(v === undefined || v === null ? '' : v).replace(/\s+/g, ' ').trim(); }
+function exLines_(groups){ return groups.filter(function(g){ return g[1].length; }).map(function(g){ return 'Ex.' + g[0] + ': ' + g[1].join(', '); }); }
+function wrongItem_(label, given, correct){ return (label ? label + ' ' : '') + (flat_(given) || '(blank)') + ' → ' + flat_(correct).replace(/,/g, ''); }
+function openItem_(label, text, r){ return (label ? label + ' ' : '') + (flat_(text) || '(blank)') + (r ? ' [AI ' + (r.correct ? '✓' : '✗') + ']' : ' [no AI feedback]'); }
+
 function buildWrongList(){
-  var out = [];
-  A3.forEach(function(it){
-    var r = S[0].ai && S[0].ai[it.l];
-    out.push('3' + it.l + ': ' + (String(S[0].draft[it.l]||'').trim() || '(blank)') + (r ? ' [AI: ' + (r.correct ? 'correct' : 'incorrect') + ']' : ' [no AI feedback]'));
-  });
-  A4L.forEach(function(l){ var r = S[1].res[l]; if (r && !r.ok) out.push('4' + l + ': ' + r.given); });
-  return out.join(', ');
+  var e3 = [], e4 = [];
+  A3.forEach(function(it){ e3.push(openItem_(it.l, S[0].draft[it.l], S[0].ai && S[0].ai[it.l])); });
+  A4L.forEach(function(l){ var r = S[1].res[l]; if (r && !r.ok) e4.push(wrongItem_(l, r.given, A4[l].ans)); });
+  return exLines_([[3, e3], [4, e4]]);
 }
 
 function submitGameData(data){

@@ -306,7 +306,7 @@ body{background:var(--desk);font-family:'Source Sans 3',Arial,Helvetica,sans-ser
 <script>
 /* ===================== CONFIG ===================== */
 var GAME_NAME = 'Unit 3 WB Language Focus B Ex. 4 & 5 pp. 30-31';
-var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwEdGlILb09xvDeqX9EZGHXOTqQA8Um7Se0nojnr2vC4ujaGAaV4iz7TwDWB1Pxbf7F2Q/exec';
+var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyLjj5ycXstxQyBeTXP6BGKuSqypnchRKtupVwvb4J7z-ydtruHviiomTw6NTcknYKL/exec';
 /* Gemini feedback proxy (Apps Script holds the API key; we send only the prompt) */
 var FEEDBACK_PROXY_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxEXar-cSzm0BnJYp6EYfUo9lKvcgsf5mF9aGSCvVqHqMRiIkYiNqjHaLSqzeHauffGhg/exec';
 
@@ -704,15 +704,20 @@ function showResults(){
 
 /* Activity 4: every rewrite is always sent as plain data (with the AI verdict if there was one).
    Activity 5: only the missed answers. */
+/* Wrong Answers for the WB Data Collector: one line per exercise ("Ex.1: ..."), items separated by commas.
+   Wrong answers are "label student answer -> correct answer" (the sheet shows the correct answer in bold red);
+   open-ended answers are always sent, with an [AI ✓] / [AI ✗] tag. */
+function first_(a){ return Array.isArray(a) ? a[0] : a; }
+function flat_(v){ return String(v === undefined || v === null ? '' : v).replace(/\s+/g, ' ').trim(); }
+function exLines_(groups){ return groups.filter(function(g){ return g[1].length; }).map(function(g){ return 'Ex.' + g[0] + ': ' + g[1].join(', '); }); }
+function wrongItem_(label, given, correct){ return (label ? label + ' ' : '') + (flat_(given) || '(blank)') + ' → ' + flat_(correct).replace(/,/g, ''); }
+function openItem_(label, text, r){ return (label ? label + ' ' : '') + (flat_(text) || '(blank)') + (r ? ' [AI ' + (r.correct ? '✓' : '✗') + ']' : ' [no AI feedback]'); }
+
 function buildWrongList(){
-  var out = [];
-  A4.forEach(function(it, k){
-    var r = S[0].ai && S[0].ai[it.l];
-    var txt = String(S[0].draft[k]||'').trim() || '(blank)';
-    out.push('4' + it.l + ': ' + txt + (r ? ' [AI: ' + (r.correct ? 'correct' : 'incorrect') + ']' : ' [no AI feedback]'));
-  });
-  A5.forEach(function(it, k){ var r = S[1].res[k]; if (r && !r.ok) out.push('5' + it.l + ': ' + r.given); });
-  return out.join(', ');
+  var e4 = [], e5 = [];
+  A4.forEach(function(it, k){ e4.push(openItem_(it.l, S[0].draft[k], S[0].ai && S[0].ai[it.l])); });
+  A5.forEach(function(it, k){ var r = S[1].res[k]; if (r && !r.ok) e5.push(wrongItem_(it.l, r.given, it.key[0])); });
+  return exLines_([[4, e4], [5, e5]]);
 }
 
 function submitGameData(data){

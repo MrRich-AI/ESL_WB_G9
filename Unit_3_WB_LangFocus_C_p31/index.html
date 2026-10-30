@@ -307,7 +307,7 @@ body{background:var(--desk);font-family:'Source Sans 3',Arial,Helvetica,sans-ser
 <script>
 /* ===================== CONFIG ===================== */
 var GAME_NAME = 'Unit 3 WB Language Focus C Ex. 6 p. 31';
-var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwEdGlILb09xvDeqX9EZGHXOTqQA8Um7Se0nojnr2vC4ujaGAaV4iz7TwDWB1Pxbf7F2Q/exec';
+var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyLjj5ycXstxQyBeTXP6BGKuSqypnchRKtupVwvb4J7z-ydtruHviiomTw6NTcknYKL/exec';
 /* Gemini feedback proxy (Apps Script holds the API key; we send only the prompt) */
 var FEEDBACK_PROXY_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxEXar-cSzm0BnJYp6EYfUo9lKvcgsf5mF9aGSCvVqHqMRiIkYiNqjHaLSqzeHauffGhg/exec';
 
@@ -527,12 +527,17 @@ function showResults(){
 }
 
 /* Every sentence is always sent as plain data, with the AI verdict if there was one. */
+/* Wrong Answers for the WB Data Collector: one line per exercise ("Ex.1: ..."), items separated by commas.
+   Wrong answers are "label student answer -> correct answer" (the sheet shows the correct answer in bold red);
+   open-ended answers are always sent, with an [AI ✓] / [AI ✗] tag. */
+function first_(a){ return Array.isArray(a) ? a[0] : a; }
+function flat_(v){ return String(v === undefined || v === null ? '' : v).replace(/\s+/g, ' ').trim(); }
+function exLines_(groups){ return groups.filter(function(g){ return g[1].length; }).map(function(g){ return 'Ex.' + g[0] + ': ' + g[1].join(', '); }); }
+function wrongItem_(label, given, correct){ return (label ? label + ' ' : '') + (flat_(given) || '(blank)') + ' → ' + flat_(correct).replace(/,/g, ''); }
+function openItem_(label, text, r){ return (label ? label + ' ' : '') + (flat_(text) || '(blank)') + (r ? ' [AI ' + (r.correct ? '✓' : '✗') + ']' : ' [no AI feedback]'); }
+
 function buildWrongList(){
-  return SLOTS.map(function(x){
-    var r = st.ai && st.ai[x.id];
-    var txt = String(st.draft[x.id]||'').trim() || '(blank)';
-    return '6 ' + x.type + ' ' + x.n + ': ' + txt + (r ? ' [AI: ' + (r.correct ? 'correct' : 'incorrect') + ']' : ' [no AI feedback]');
-  }).join(', ');
+  return exLines_([[6, SLOTS.map(function(x){ return openItem_(x.type + ' ' + x.n, st.draft[x.id], st.ai && st.ai[x.id]); })]]);
 }
 
 function submitGameData(data){

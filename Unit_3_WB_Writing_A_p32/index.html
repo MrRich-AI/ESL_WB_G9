@@ -342,7 +342,7 @@ input.gap.bad{border-bottom-color:var(--bad);color:var(--bad);font-weight:700;ba
 <script>
 /* ===================== CONFIG ===================== */
 var GAME_NAME = 'Unit 3 WB Writing A Ex. 1 & 2 p. 32';
-var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwEdGlILb09xvDeqX9EZGHXOTqQA8Um7Se0nojnr2vC4ujaGAaV4iz7TwDWB1Pxbf7F2Q/exec';
+var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyLjj5ycXstxQyBeTXP6BGKuSqypnchRKtupVwvb4J7z-ydtruHviiomTw6NTcknYKL/exec';
 /* Gemini feedback proxy (Apps Script holds the API key; we send only the prompt) */
 var FEEDBACK_PROXY_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxEXar-cSzm0BnJYp6EYfUo9lKvcgsf5mF9aGSCvVqHqMRiIkYiNqjHaLSqzeHauffGhg/exec';
 
@@ -654,14 +654,20 @@ function showResults(){
 }
 
 /* Activity 1: only missed answers. Activity 2: every heading always sent as plain data, with the AI verdict if there was one. */
+/* Wrong Answers for the WB Data Collector: one line per exercise ("Ex.1: ..."), items separated by commas.
+   Wrong answers are "label student answer -> correct answer" (the sheet shows the correct answer in bold red);
+   open-ended answers are always sent, with an [AI ✓] / [AI ✗] tag. */
+function first_(a){ return Array.isArray(a) ? a[0] : a; }
+function flat_(v){ return String(v === undefined || v === null ? '' : v).replace(/\s+/g, ' ').trim(); }
+function exLines_(groups){ return groups.filter(function(g){ return g[1].length; }).map(function(g){ return 'Ex.' + g[0] + ': ' + g[1].join(', '); }); }
+function wrongItem_(label, given, correct){ return (label ? label + ' ' : '') + (flat_(given) || '(blank)') + ' → ' + flat_(correct).replace(/,/g, ''); }
+function openItem_(label, text, r){ return (label ? label + ' ' : '') + (flat_(text) || '(blank)') + (r ? ' [AI ' + (r.correct ? '✓' : '✗') + ']' : ' [no AI feedback]'); }
+
 function buildWrongList(){
-  var out = [];
-  A1.forEach(function(it){ var r = S[0].res[it.l]; if (r && !r.ok) out.push('1' + it.l + ': ' + r.given); });
-  A2.forEach(function(it){
-    var r = S[1].ai && S[1].ai[it.n];
-    out.push('2 section ' + it.n + ': ' + (String(S[1].draft[it.n]||'').trim() || '(blank)') + (r ? ' [AI: ' + (r.correct ? 'correct' : 'incorrect') + ']' : ' [no AI feedback]'));
-  });
-  return out.join(', ');
+  var e1 = [], e2 = [];
+  A1.forEach(function(it){ var r = S[0].res[it.l]; if (r && !r.ok) e1.push(wrongItem_(it.l, r.given, first_(it.ans))); });
+  A2.forEach(function(it){ e2.push(openItem_('section ' + it.n, S[1].draft[it.n], S[1].ai && S[1].ai[it.n])); });
+  return exLines_([[1, e1], [2, e2]]);
 }
 
 function submitGameData(data){
