@@ -9,8 +9,8 @@ Richard Imbeau, IGCSE ESL teacher (Grade 9: 9A1, 9A2, 9A3; Grade 10: 10A1) at Ro
 
 ## Pick the rule set first
 - Richard names the build type in the request: **WB** or **ESSAY**. If the type isn't stated, ask before building.
-- WB builds follow the WB rule set and submit only via the WB data submission template (WB Data Collector).
-- ESSAY builds follow the Essay HTML rule set and submit only via the Essay data submission template (Essay Data).
+- WB builds follow the WB rule set and submit only via the WB data submission template (NEW WB DATA sheet).
+- ESSAY builds follow the Essay HTML rule set and submit only via the Essay data submission template (new Essay sheet).
 - Never include both endpoints in one build.
 
 ## Repos and layout
@@ -36,20 +36,27 @@ Richard Imbeau, IGCSE ESL teacher (Grade 9: 9A1, 9A2, 9A3; Grade 10: 10A1) at Ro
 - **Multiple-choice:** single attempt per question — locks on any answer, reveals the correct answer, Next unlocks once answered regardless of correctness. For complex types (sorting, matching, drag-and-drop), ask how scoring/advancement should work.
 - **Word-bank activities:** no per-question Check button. Students fill all gaps freely (editable, kept if they leave and return). A single "Check answers" button unlocks only once every gap is filled, then grades and locks everything at once.
 - **No pasting:** block pasting into every answer box (gaps, text inputs, textareas): keyboard paste, right-click/long-press paste and drag-and-drop. Show a short "Please type your answer." message when a student tries. Copying is not blocked and attempts are not logged. WB builds only — Essay builds allow pasting.
+- **Translated feedback:** every feedback message a student sees (correct/incorrect explanations, "you found…" messages, review-screen explanations and AI feedback) shows a translation on the line under the English. Vietnamese by default; Grade 9 builds also switch to Simplified Chinese when the page is opened with `?zh` (e.g. `…/index.html?zh`). Fixed feedback is translated in the build; AI feedback is translated by Gemini in the same request (ask for a `*_tr` field next to each English comment). Instructions, buttons and example sentences stay English only. Translations are display-only and are never sent to the data sheet.
+- **Finish & Submit:** the Finish & Submit button has a colourful, flashing, pulsing glow so students can't miss it. After it is clicked, the sending message reads "Sending your work to your teacher… Please wait. Do not close this window." and keeps a colourful flashing/pulsing glow until sending completes; then it shows the normal sent message (or the usual failure message with a Send again button).
 - **Review:** after each activity, a review screen lists every question (correct and wrong) with the student's answer, the correct answer and an explanation, before returning to the homescreen. Completed activities keep a persistent "Review" button on the homescreen opening that same screen.
 - **Scores:** shown as fractions of the total (e.g. "6/7").
 - **No "Try Again"** and no replay attempts counter; `attempts` is hardcoded to 1.
 
 ## WB data submission
-Endpoint (Google Sheet "WB Data Collector"):
+Endpoint (Google Sheet "NEW WB DATA", WB Data Collector v3):
 ```js
-var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwEdGlILb09xvDeqX9EZGHXOTqQA8Um7Se0nojnr2vC4ujaGAaV4iz7TwDWB1Pxbf7F2Q/exec';
-submitGameData({ gameName: 'Your WB Exercise Name Here', studentName: studentName, class: studentClass, score: correctCount + '/' + totalQuestions, minutesPlayed: minutesPlayed, wrongQuestions: wrongQuestionsList, attempts: 1 });
+var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyLjj5ycXstxQyBeTXP6BGKuSqypnchRKtupVwvb4J7z-ydtruHviiomTw6NTcknYKL/exec';
+submitGameData({ gameName: 'Your WB Exercise Name Here', studentName: studentName, class: studentClass, score: '8/10, 12/15', minutesPlayed: minutesPlayed, wrongQuestions: wrongQuestionsList, attempts: 1 });
 ```
-- Fire once per completed run (duplicate-submission guard; navigating back to the results screen must not resubmit).
-- Field order: gameName, studentName, class, score, minutesPlayed, wrongQuestions, attempts.
-- `wrongQuestions`: comma-separated "Q#: response" pairs using the student's own answer (e.g. "2: article, 5: blog"); empty string or omitted if nothing missed.
-- `minutesPlayed`: "MM:SS" (e.g. "02:06"). The sheet's Timestamp column shows date and time.
+- Send as JSON (`fetch` POST, `mode:'no-cors'`, `Content-Type: text/plain;charset=utf-8`, `body: JSON.stringify(data)`), so `wrongQuestions` stays an array.
+- Fire once per completed run (duplicate-submission guard; navigating back to the results screen must not resubmit). Multi-activity builds submit once, after every activity is done.
+- `gameName` becomes the sheet tab name and must start with "Unit N" (e.g. "Unit 4 WB Vocabulary pp. 36-37") so the Class tabs can group by unit.
+- `score`: one fraction per activity, comma-and-space separated (e.g. "3/14, 7/8, 6/7").
+- `minutesPlayed`: "MM:SS" (e.g. "02:06"). `attempts`: 1.
+- `wrongQuestions`: an **array of lines, one per exercise**, each starting with a short identifier: `"Ex.1: …"`, `"Ex.2: …"`. Leave out an exercise with nothing wrong. Items on a line are separated by `", "`:
+  - wrong answer: `label student answer → correct answer` (e.g. `"Ex.2: g ship → boat, e plane → balloon"`); the sheet shows the text after → in bold red, so strip commas from the correct answer.
+  - open-ended / AI-checked answer (always sent): `label text [AI ✓ word]` / `[AI ✗]` / `[no AI feedback]` (the sheet colours ✓ tags green and ✗ tags red).
+  - Example: `["Ex.1: liner, driver (not found)", "Ex.2: g ship → boat", "Ex.3: 1 It runs on rails. [AI ✓ tram], 2 A big ship. [AI ✗]"]`
 
 ## Live external calls (e.g. AI feedback)
 - The button that advances to review/results is always clickable and never gated on the external call succeeding.
@@ -60,13 +67,26 @@ submitGameData({ gameName: 'Your WB Exercise Name Here', studentName: studentNam
 - Near the finish/submit button, show a clear note that work isn't submitted until they click it.
 
 ## Essay HTML rule set
-- Based on the WB rule set (widescreen, no "Try Again", attempts = 1, post-activity review screen, persistent Review button, image-matched style, required name/class, live-call safeguards above). No answer shuffling and no single-attempt lock (not multiple-choice).
+- Based on the WB rule set (widescreen, no "Try Again", attempts = 1, post-activity review screen, persistent Review button, image-matched style, required name/class, translated feedback, glowing Finish & Submit, live-call safeguards above), except pasting (see below). No answer shuffling and no single-attempt lock (not multiple-choice).
 - **AI feedback:** Gemini, routed through a separate Apps Script Web App proxy that holds the API key server-side. Never embed an API key in the HTML — GitHub push protection blocks it. The HTML sends only the prompt; the proxy calls Gemini and returns parsed feedback JSON.
+- **Pasting:** allowed in Essay builds, but count every paste/drop into the essay box and send the count (`pasted`).
 - **Scoring:** against the official Cambridge IGCSE ESL (0510) mark scheme — Content (0–6) and Language (0–9) — with a mark and qualitative comments explaining each band placement. Score format: "X/15 (Content: x/6, Language: x/9)".
 
 ## Essay data submission
-- Endpoint (Google Sheet "Essay Data"): `https://script.google.com/macros/s/AKfycbwNhsD9-6Zxcm9zz2Rq3uCwx8jxbu3KPYcLULLtjV85zPoUsCmAp5xcNnXepWfOitUSBA/exec`
+Endpoint (new Essay data sheet, Essay Data Collector v2):
+```js
+var ESSAY_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw4wtgPJ7VzRGWR3zhEtggTOKbb1WpjBCejIrFnkkig3AF7-5S5-SGeMDlHjy8wReayVw/exec';
+fetch(ESSAY_DATA_ENDPOINT, { method: 'POST', body: JSON.stringify({
+  activity: ACTIVITY_NAME, studentClass: studentClass, studentName: studentName,
+  duration: '2min 15sec', score: '11/15 (Content: 4/6, Language: 7/9)',
+  feedback: { content: '…', language: '…', overall: '…' },   // English only
+  essayResponse: essayText, wordMin: 120, wordMax: 160, pasted: pasteCount
+}) });
+```
 - Fire once per completed run.
-- Field order: timestamp (added server-side), activity, studentClass, studentName, duration, score, feedback, essayResponse — matching sheet headers Timestamp | Activity | Class | Name | Duration | Score | AI Feedback | Essay Response.
-- The Apps Script writes columns by fixed array position, not by matching header text.
-- `duration` formatted as "Xmin Ysec" (e.g. "2min 15sec").
+- `activity` becomes the sheet tab name and must start with "Unit N".
+- `duration`: "Xmin Ysec". `score`: "X/15 (Content: x/6, Language: x/9)", or "N/A (AI feedback unavailable)" when no AI mark came back (the sheet shows "Not marked").
+- `feedback`: the AI feedback as `{content, language, overall}` in English (ask Gemini for `contentComment`, `languageComment`, `overall` and their `*_tr` translations; send only the English). Send `''` when there is no AI feedback.
+- `wordMin` / `wordMax`: the task's word range. The sheet flags essays more than 10% under the minimum (red) or more than 15% over the maximum (yellow).
+- `pasted`: the number of pastes into the essay box (0 if none).
+- Never send translations.
