@@ -121,6 +121,8 @@ body{background:var(--desk);font-family:'Source Sans 3',Arial,Helvetica,sans-ser
 .aibar .st.err{color:var(--bad)}
 .spin{display:inline-block;width:16px;height:16px;border:3px solid #bbb;border-top-color:#151515;border-radius:50%;animation:sp 1s linear infinite;vertical-align:-3px;margin-right:8px}
 @keyframes sp{to{transform:rotate(360deg)}}
+.tr{display:block;margin-top:3px;font-size:.93em;font-style:italic;color:#2f2f2f;font-weight:400}
+.fb .tr,.ai .tr,.tip .tr{color:inherit;opacity:.9}
 .tag{font-weight:700}
 .tag.ok{color:var(--ok)} .tag.bad{color:var(--bad)}
 
@@ -382,6 +384,56 @@ var A3_MODELS = {
   yacht: 'A sailing boat that is often used for racing or for leisure.'
 };
 
+/* ===================== FEEDBACK TRANSLATION =====================
+   Vietnamese by default; Chinese when the page is opened with ?zh.
+   Translations are shown on screen only — they are never sent to the data sheet. */
+var LANG = /(^\?|&)zh(=|&|$)/i.test(location.search) ? 'zh' : 'vi';
+var TR = {
+  vi: {
+    found: function(w){ return 'Bạn đã tìm thấy “' + w + '”!'; },
+    nope: 'Đó không phải là một trong các từ. Hãy thử lại.',
+    isFound: 'Đã tìm thấy', notFound: 'Chưa tìm thấy',
+    across: function(r,c){ return 'Hàng ngang, hàng ' + r + ', bắt đầu từ cột ' + c + '.'; },
+    down: function(r,c){ return 'Hàng dọc, cột ' + c + ', bắt đầu từ hàng ' + r + '.'; },
+    diag: function(r,c){ return 'Đường chéo (xuống và sang phải), bắt đầu từ hàng ' + r + ', cột ' + c + '.'; },
+    correct: 'Đúng.', answerIs: function(a){ return 'Đáp án đúng là “' + a + '”.'; },
+    why: {
+      a: 'Phà (ferry) là loại tàu chở người, hàng hóa và xe cộ qua sông hoặc biển.',
+      b: 'Ô tô (car) là phương tiện đi lại cá nhân phổ biến nhất.',
+      c: 'Xe đạp (bicycle) có hai bánh và do một người đạp.',
+      d: 'Phi công (pilot) là người lái máy bay.',
+      e: 'Khinh khí cầu (balloon) bay trên không, nhưng người ta chủ yếu đi để giải trí và ngắm cảnh.',
+      f: 'Người soát vé (conductor) kiểm tra vé của hành khách trên xe buýt hoặc tàu hỏa.',
+      g: 'Thuyền (boat) là từ chung chỉ mọi phương tiện di chuyển trên mặt nước.',
+      h: 'Xe khách (coach) là xe buýt tiện nghi dùng cho những chuyến đi dài bằng đường bộ, chở nhiều hành khách.'
+    },
+    noAI: 'Không nhận được nhận xét AI cho câu này. Giáo viên của bạn sẽ kiểm tra.',
+    aiName: 'Vietnamese'
+  },
+  zh: {
+    found: function(w){ return '你找到了“' + w + '”！'; },
+    nope: '这不是要找的单词之一。请再试一次。',
+    isFound: '已找到', notFound: '未找到',
+    across: function(r,c){ return '横向，第 ' + r + ' 行，从第 ' + c + ' 列开始。'; },
+    down: function(r,c){ return '纵向，第 ' + c + ' 列，从第 ' + r + ' 行开始。'; },
+    diag: function(r,c){ return '斜向（向右下方），从第 ' + r + ' 行第 ' + c + ' 列开始。'; },
+    correct: '正确。', answerIs: function(a){ return '正确答案是“' + a + '”。'; },
+    why: {
+      a: '渡轮（ferry）是在水上运送人、货物和车辆的船。',
+      b: '汽车（car）是最常见的私人交通工具。',
+      c: '自行车（bicycle）有两个轮子，通常由一个人骑。',
+      d: '飞行员（pilot）是驾驶飞机的人。',
+      e: '热气球（balloon）可以在空中飞行，但人们乘坐它主要是为了娱乐和观光。',
+      f: '售票员（conductor）在公共汽车或火车上检查乘客的车票。',
+      g: '船（boat）是所有水上交通工具的统称。',
+      h: '长途客车（coach）是在公路上进行长途旅行、可以载很多乘客的舒适大巴。'
+    },
+    noAI: '这句话没有收到 AI 评语。老师会检查。',
+    aiName: 'Simplified Chinese'
+  }
+}[LANG];
+function trLine(t){ return t ? '<span class="tr" lang="'+(LANG==='zh'?'zh-Hans':'vi')+'">' + esc(t) + '</span>' : ''; }
+
 /* ===================== STATE ===================== */
 var student = {name:'', cls:''};
 var startTime = null, endTime = null;
@@ -551,11 +603,11 @@ function tryWord(s, e){
   });
   if (hit) {
     S.a1.found[hit.w] = true;
-    $('a1msg').style.color = 'var(--ok)'; $('a1msg').textContent = '✓ You found “' + hit.w + '”!';
+    $('a1msg').style.color = 'var(--ok)'; $('a1msg').innerHTML = esc('✓ You found “' + hit.w + '”!') + trLine(TR.found(hit.w));
   } else {
     if (str.length > 1) {
       ws.nope = [s[0],s[1],e[0],e[1]];
-      $('a1msg').style.color = 'var(--bad)'; $('a1msg').textContent = 'That isn’t one of the words. Try again.';
+      $('a1msg').style.color = 'var(--bad)'; $('a1msg').innerHTML = esc('That isn’t one of the words. Try again.') + trLine(TR.nope);
       setTimeout(function(){ ws.nope = null; drawA1(); }, 650);
     }
   }
@@ -609,7 +661,8 @@ function renderA2(){
     var v = S.a2.ans[x.l] || '', cls = '', fb = '';
     if (locked) {
       var ok = S.a2.res[x.l]; cls = ok ? ' ok' : ' bad';
-      fb = '<div class="fb '+(ok?'ok':'bad')+'">'+(ok ? '✓ Correct. ' : '✗ The answer is <b>'+x.a[0]+'</b>. ')+esc(x.why)+'</div>';
+      fb = '<div class="fb '+(ok?'ok':'bad')+'">'+(ok ? '✓ Correct. ' : '✗ The answer is <b>'+x.a[0]+'</b>. ')+esc(x.why)+
+           trLine((ok ? TR.correct : TR.answerIs(x.a[0])) + ' ' + TR.why[x.l])+'</div>';
     }
     h += '<div class="item"><div class="l">'+x.l+'</div><div class="q">'+esc(x.q)+
          '<input class="gap'+(x.block?' block':'')+cls+'" data-l="'+x.l+'" value="'+esc(v)+'" autocomplete="off" spellcheck="false" aria-label="Answer '+x.l+'"'+(locked?' disabled':'')+'>'+fb+'</div></div>';
@@ -648,8 +701,8 @@ function renderA3(){
   for (var i=1;i<=A3_N;i++){
     var id = 's'+i, r = S.a3.ai && S.a3.ai[id], fb = '';
     if (S.a3.ai) {
-      fb = r ? '<div class="ai '+(r.correct?'ok':'bad')+'">'+(r.correct?'✓ ':'✗ ')+(r.word && r.word!=='none' ? '<b>'+esc(r.word)+'</b> — ' : '')+esc(r.comment)+'</div>'
-             : '<div class="ai none">No AI comment came back for this sentence. Your teacher will check it.</div>';
+      fb = r ? '<div class="ai '+(r.correct?'ok':'bad')+'">'+(r.correct?'✓ ':'✗ ')+(r.word && r.word!=='none' ? '<b>'+esc(r.word)+'</b> — ' : '')+esc(r.comment)+trLine(r.tr)+'</div>'
+             : '<div class="ai none">No AI comment came back for this sentence. Your teacher will check it.'+trLine(TR.noAI)+'</div>';
     }
     h += '<div class="item"><div class="l">'+i+'</div><div class="q"><textarea class="rw" data-id="'+id+'" spellcheck="false" aria-label="Sentence '+i+'"'+(locked?' disabled':'')+'>'+esc(S.a3.draft[id]||'')+'</textarea>'+fb+'</div></div>';
   }
@@ -707,7 +760,8 @@ function buildPrompt(){
     'Write each comment directly to the student in 1-2 short, simple sentences (Grade 9 ESL level): if correct, say what makes the description work; if incorrect, explain exactly what is wrong and give one improved version. ' +
     '\n\nSentences:\n' + lines.join('\n') + '\n\n' +
     'Respond with ONLY a JSON object, no markdown, no code fences, in exactly this shape: ' +
-    '{"items":[{"id":"s1","word":"tram","correct":true,"comment":"..."},{"id":"s2","word":"none","correct":false,"comment":"..."}]} with one entry for each id s1 to s7. "word" must be one of: liner, driver, helicopter, lorry, passenger, tram, yacht, none.';
+    '{"items":[{"id":"s1","word":"tram","correct":true,"comment":"...","comment_tr":"..."},{"id":"s2","word":"none","correct":false,"comment":"...","comment_tr":"..."}]} with one entry for each id s1 to s7. "word" must be one of: liner, driver, helicopter, lorry, passenger, tram, yacht, none. ' +
+    '"comment" is in English. "comment_tr" is a faithful, natural ' + TR.aiName + ' translation of that same comment for a Grade 9 student; keep any English example sentences and English vocabulary words in English inside it.';
 }
 function getAIFeedback(){
   if (S.a3.aiState === 'loading' || S.a3.ai) return;
@@ -728,7 +782,7 @@ function getAIFeedback(){
         if (ids.indexOf(id) === -1) id = ids[i];
         var w = String(x.word || 'none').toLowerCase().trim();
         if (A3_WORDS.indexOf(w) === -1) w = 'none';
-        if (id) map[id] = { word: w, correct: x.correct === true || x.correct === 'true', comment: String(x.comment || '') };
+        if (id) map[id] = { word: w, correct: x.correct === true || x.correct === 'true', comment: String(x.comment || ''), tr: String(x.comment_tr || '') };
       });
       if (!Object.keys(map).length) throw new Error('unreadable');
       S.a3.ai = map; S.a3.aiState = 'done';
@@ -753,6 +807,12 @@ function dirText(x){
   if (d[1]===0) return 'down, column ' + (x.c+1) + ', starting at row ' + (x.r+1);
   return 'diagonally (down and to the right), starting at row ' + (x.r+1) + ', column ' + (x.c+1);
 }
+function dirTr(x){
+  var d = x.d;
+  if (d[0]===0) return TR.across(x.r+1, x.c+1);
+  if (d[1]===0) return TR.down(x.r+1, x.c+1);
+  return TR.diag(x.r+1, x.c+1);
+}
 function openReview(n, ret){
   reviewReturn = ret; reviewAct = n;
   var head = '', body = '';
@@ -765,7 +825,7 @@ function openReview(n, ret){
       if (x.ex) return; k++;
       var ok = !!S.a1.found[x.w];
       body += '<tr class="'+(ok?'ok':'bad')+'"><td><span class="tag '+(ok?'ok':'bad')+'">'+k+' '+(ok?'✓':'✗')+'</span></td><td><b>'+x.w+'</b></td>'+
-              '<td class="'+(ok?'ans-ok':'ans-bad')+'">'+(ok?'Found':'Not found')+'</td><td>'+x.w.toUpperCase()+' runs '+dirText(x)+'.</td></tr>';
+              '<td class="'+(ok?'ans-ok':'ans-bad')+'">'+(ok?'Found':'Not found')+trLine(ok?TR.isFound:TR.notFound)+'</td><td>'+x.w.toUpperCase()+' runs '+dirText(x)+'.'+trLine(dirTr(x))+'</td></tr>';
     });
   } else if (n === 2) {
     $('revTitle').textContent = 'Review — Activity 2: What or who is being described?';
@@ -774,7 +834,8 @@ function openReview(n, ret){
     A2.forEach(function(x){
       var ok = !!S.a2.res[x.l], given = (S.a2.ans[x.l]||'').trim();
       body += '<tr class="'+(ok?'ok':'bad')+'"><td><span class="tag '+(ok?'ok':'bad')+'">'+x.l+' '+(ok?'✓':'✗')+'</span></td><td>'+esc(x.q)+'</td>'+
-              '<td class="'+(ok?'ans-ok':'ans-bad')+'">'+(given?esc(given):'—')+'</td><td><b>'+x.a[0]+'</b></td><td>'+esc(x.why)+'</td></tr>';
+              '<td class="'+(ok?'ans-ok':'ans-bad')+'">'+(given?esc(given):'—')+'</td><td><b>'+x.a[0]+'</b></td><td>'+esc(x.why)+
+              trLine((ok ? TR.correct : TR.answerIs(x.a[0])) + ' ' + TR.why[x.l])+'</td></tr>';
     });
   } else {
     $('revTitle').textContent = 'Review — Activity 3: Describe the other seven words';
@@ -785,7 +846,7 @@ function openReview(n, ret){
       var given = String(S.a3.draft[id]||'').trim();
       var w = r && r.word !== 'none' ? r.word : '';
       var model = w ? esc(A3_MODELS[w]) : '<span class="note">Remaining words: ' + A3_WORDS.join(', ') + '</span>';
-      var comment = r ? esc(r.comment) : '<i>AI feedback wasn’t available for this sentence. Your teacher will check it.</i>';
+      var comment = r ? esc(r.comment) + trLine(r.tr) : '<i>AI feedback wasn’t available for this sentence. Your teacher will check it.</i>' + trLine(TR.noAI);
       body += '<tr class="'+cls+'"><td><span class="tag '+cls+'">'+i+' '+(r?(r.correct?'✓':'✗'):'•')+'</span></td>'+
               '<td class="hand">'+(given?esc(given):'—')+'</td><td><b>'+(w||(r?'none':'—'))+'</b></td><td>'+model+'</td><td>'+comment+'</td></tr>';
     }
