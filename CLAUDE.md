@@ -17,7 +17,7 @@ Richard Imbeau, IGCSE ESL teacher (Grade 9: 9A1, 9A2, 9A3; Grade 10: 10A1) at Ro
 - Grade 9 builds go in **ESL_WB_G9**; Grade 10 builds go in **ESL_WB_G10** (owner mrrich-ai).
 - Each build is a single self-contained `index.html` in its own folder, following the existing folder naming (e.g. `Unit_3_WB_LangFocus_A_pp29-30`, `Unit_13_WB_Reading_B_p130`).
 - The root `index.html` is the landing page: one card per unit (all units kept, newest first); selecting a unit shows all its builds. Add each new build to it.
-- Ask before committing or pushing a new build.
+- New builds and edits: commit and push without asking (Oct 30 2026); never paste the raw HTML code in chat.
 
 ## Building from uploaded workbook images
 - Extract the questions from the image and make the activity identical to the one shown. Ask first if there's a concern about how to present something.
