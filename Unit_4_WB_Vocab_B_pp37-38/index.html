@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 4 WB Vocabulary B pp. 37-38</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&family=Roboto+Condensed:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#151515; --muted:#4a4a4a; --line:#c4c4c4; --page:#ffffff; --desk:#d6d6d6;
+  --ok:#17692f; --okbg:#e5f3e9; --bad:#a8231b; --badbg:#fbeae8; --soft:#f3f3f3; --pen:#1a3f8a; --textbox:#e6e7e9;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{overflow-x:hidden}
+body{background:var(--desk);font-family:'Source Sans 3',Arial,Helvetica,sans-serif;color:var(--ink);font-size:18px;line-height:1.5}
+.page{max-width:1120px;margin:24px auto;background:var(--page);box-shadow:0 3px 14px rgba(0,0,0,.2);min-height:calc(100vh - 48px);padding-bottom:40px}
+.screen{display:none}
+.screen.active{display:block}
+
+/* Unit band */
+.band{background:linear-gradient(#9e9e9e 0%,#c9c9c9 40%,#efefef 80%,#fff 100%);padding:40px 56px 24px}
+.band h1{margin:0;font-weight:400;font-size:48px;letter-spacing:-.5px;line-height:1.15}
+.band h1 .chev{font-weight:300;color:#3a3a3a;margin-right:10px}
+.band h2{margin:18px 0 0;font-weight:400;font-size:31px}
+.runhead{display:flex;justify-content:flex-end;margin:30px 56px 0;padding-bottom:6px;border-bottom:1.5px solid #333;font-size:16px;font-weight:600}
+.lfsub{margin:22px 0 8px;font-weight:400;font-size:29px}
+.content{padding:18px 56px 0}
+
+/* Generic */
+.btn{font-family:inherit;font-size:17px;font-weight:600;border:2px solid #151515;background:#151515;color:#fff;padding:9px 20px;border-radius:4px;cursor:pointer;transition:transform .08s,opacity .15s}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.ghost{background:#fff;color:#151515}
+.btn.small{font-size:15px;padding:5px 14px}
+.note{font-size:15px;color:var(--muted)}
+.hand{font-family:'Patrick Hand',cursive;font-size:21px;letter-spacing:.3px;color:var(--pen)}
+
+/* Start */
+.startgrid{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:start;margin-top:10px}
+.panel{border:2px solid #222;padding:22px 26px;box-shadow:4px 4px 0 #bbb;background:#fff}
+.panel h3{margin:0 0 12px;font-size:22px}
+.field{margin-bottom:16px}
+.field label{display:block;font-weight:600;margin-bottom:4px}
+.field input{width:100%;font-family:inherit;font-size:18px;padding:8px 10px;border:1.5px solid #555;border-radius:3px;color:var(--ink)}
+.field input:focus{outline:3px solid #9a9a9a;outline-offset:1px}
+.intro p{margin:0 0 10px}
+.intro ol{margin:6px 0 0;padding-left:22px}
+
+/* Home */
+.actrow{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}
+.actrow .num{font-weight:700;font-size:22px}
+.actrow .status{font-size:15px;color:var(--muted);margin-top:2px}
+.actrow .status.done{color:var(--ok);font-weight:600}
+.actrow .btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.bar{height:8px;background:#e4e4e4;border-radius:4px;margin-top:6px;max-width:360px;overflow:hidden}
+.bar i{display:block;height:100%;background:#151515;width:0;transition:width .4s}
+.finishbox{margin-top:26px;padding:18px 22px;background:var(--soft);border-left:5px solid #151515;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* Glowing Finish & Submit + sending message */
+@keyframes rainbowGlow{
+  0%  {box-shadow:0 0 6px 2px #ff3b3b,0 0 18px 6px rgba(255,59,59,.55)}
+  20% {box-shadow:0 0 6px 2px #ff9f1a,0 0 18px 6px rgba(255,159,26,.55)}
+  40% {box-shadow:0 0 6px 2px #22c55e,0 0 18px 6px rgba(34,197,94,.55)}
+  60% {box-shadow:0 0 6px 2px #3b82f6,0 0 18px 6px rgba(59,130,246,.55)}
+  80% {box-shadow:0 0 6px 2px #d946ef,0 0 18px 6px rgba(217,70,239,.55)}
+  100%{box-shadow:0 0 6px 2px #ff3b3b,0 0 18px 6px rgba(255,59,59,.55)}
+}
+@keyframes pulseScale{from{transform:scale(1)}to{transform:scale(1.06)}}
+@keyframes flashBorder{0%,100%{border-color:#ff3b3b}25%{border-color:#ff9f1a}50%{border-color:#22c55e}75%{border-color:#3b82f6}}
+.glowbtn{font-size:19px;padding:11px 26px;animation:rainbowGlow 1.8s linear infinite,pulseScale .8s ease-in-out infinite alternate,flashBorder 1.2s linear infinite}
+.glowbtn:disabled{animation:none;box-shadow:none}
+
+/* Activity common */
+.instr{display:flex;gap:16px;font-size:18px;margin:6px 0 14px}
+.instr .n{font-weight:700;min-width:22px}
+.actfoot{position:sticky;bottom:0;z-index:20;background:var(--page);padding:12px 0;border-top:1.5px solid #333;display:flex;justify-content:space-between;align-items:center;margin-top:22px;gap:14px;flex-wrap:wrap}
+.footright{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.submitnote{font-size:15px;color:var(--muted);margin:10px 0 0;text-align:right}
+
+/* Word box */
+.wbox{border:2.5px solid #222;box-shadow:5px 5px 0 #c9c9c9;padding:14px 22px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 24px;font-size:18px;font-weight:600;margin:0 0 18px 38px;max-width:640px}
+.wbox .wl{flex-basis:100%;display:flex;justify-content:center;gap:6px 30px;flex-wrap:wrap}
+.wbox span{padding:0 2px;transition:color .2s}
+.wbox span.used{text-decoration:line-through;text-decoration-thickness:2px;color:#8a8a8a}
+
+/* Activity 4 gaps */
+.items{margin-left:38px}
+.item{display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start;padding:12px 0 10px;border-bottom:1px dashed #e0e0e0}
+.item .l{font-weight:700;padding-top:4px}
+.item .q{padding-top:4px}
+.gap{font-family:'Patrick Hand',cursive;font-size:21px;border:0;border-bottom:2px dotted #333;width:200px;padding:1px 6px;margin:0 0 0 8px;background:#fafafa;color:var(--pen)}
+.gap:focus{outline:none;background:#efefef;border-bottom-style:solid}
+.gap:disabled{background:transparent}
+.gap.ok{border-bottom-color:var(--ok);color:var(--ok);background:var(--okbg)}
+.gap.bad{border-bottom-color:var(--bad);color:var(--bad);background:var(--badbg)}
+.fb{font-size:16px;margin-top:6px;padding:6px 10px;border-radius:3px;display:none;animation:pop .25s ease;font-family:'Source Sans 3',Arial,sans-serif;line-height:1.45}
+.fb.ok{display:block;background:var(--okbg);color:var(--ok)}
+.fb.bad{display:block;background:var(--badbg);color:var(--bad)}
+@keyframes pop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.tr{display:block;margin-top:3px;font-size:.93em;font-style:italic;color:#2f2f2f;font-weight:400}
+.fb .tr{color:inherit;opacity:.9}
+
+/* Activity 5 text box (as printed) */
+.tbox{margin:0 0 0 38px;background:var(--textbox);border:1.5px solid #333;padding:18px 24px 20px;font-family:'Roboto Condensed','Arial Narrow',Arial,sans-serif;font-size:18px;line-height:2.15;color:#111}
+.tbox h3{margin:0 0 6px;font-size:22px;font-weight:700;line-height:1.3}
+.tbox p{margin:0 0 10px}
+.tbox .gl{font-weight:700}
+.tbox .gap{width:170px;background:#fbfbfb;margin-left:4px}
+.tbox .gap:disabled{background:transparent}
+.tbox .gap.ok{background:var(--okbg)} .tbox .gap.bad{background:var(--badbg)}
+.fblist{margin:16px 0 0 38px}
+.fblist .fb{display:block;margin:6px 0}
+
+/* Review */
+.scoreline{font-size:20px;margin:4px 0 16px}
+.rtable{width:100%;border-collapse:collapse;font-size:16px}
+.rtable th{text-align:left;border-bottom:2px solid #222;padding:8px;font-size:15px}
+.rtable td{border-bottom:1px solid var(--line);padding:9px 8px;vertical-align:top}
+.rtable tr.ok td:first-child{border-left:5px solid var(--ok)}
+.rtable tr.bad td:first-child{border-left:5px solid var(--bad)}
+.ans-bad{color:var(--bad);font-weight:600}
+.ans-ok{color:var(--ok);font-weight:600}
+.tag{font-weight:700}
+.tag.ok{color:var(--ok)} .tag.bad{color:var(--bad)}
+
+/* Results */
+.resgrid{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:8px}
+.big{font-size:36px;font-weight:700;letter-spacing:.5px}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;font-size:18px}
+.kv b{font-weight:600}
+.sublist{margin:0;padding:0;list-style:none}
+.sublist li{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);gap:10px}
+#submitStatus{margin-top:18px;font-size:16px;padding:10px 14px;border-radius:4px;background:var(--soft);border:2px solid transparent}
+#submitStatus.sending{font-size:18px;font-weight:700;background:#fff;color:#151515;animation:rainbowGlow 1.8s linear infinite,flashBorder 1.2s linear infinite,pulseScale .9s ease-in-out infinite alternate}
+#submitStatus.ok{background:var(--okbg);color:var(--ok)}
+#submitStatus.bad{background:var(--badbg);color:var(--bad)}
+
+@media (max-width:820px){
+  .band,.content{padding-left:18px;padding-right:18px}
+  .runhead{margin-left:18px;margin-right:18px}
+  .band h1{font-size:34px}.band h2{font-size:24px}
+  .startgrid,.resgrid{grid-template-columns:1fr}
+  .items,.tbox,.wbox,.fblist{margin-left:0}
+  .rtable{font-size:14px}
+}
+
+/* Tablet scroll hint + no-paste toast */
+#scrollHint{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:50;display:none;margin:0;font-family:inherit;font-size:15px;font-weight:600;line-height:1;padding:10px 18px;border:2px solid #fff;border-radius:22px;background:#151515;color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.35);cursor:pointer;animation:hintBob 1.6s ease-in-out infinite}
+#scrollHint.show{display:block}
+#noPaste{position:fixed;z-index:60;display:none;background:#a8231b;color:#fff;font-size:15px;font-weight:600;padding:7px 14px;border-radius:4px;box-shadow:0 3px 10px rgba(0,0,0,.3);pointer-events:none}
+#noPaste.show{display:block;animation:pop .2s ease}
+@keyframes hintBob{0%,100%{transform:translateX(-50%)}50%{transform:translate(-50%,4px)}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- START -->
+  <section class="screen active" id="s-start">
+    <div class="band">
+      <h1><span class="chev">&rsaquo;</span>Unit 4: Transport</h1>
+      <h2>Vocabulary focus: Transport</h2>
+    </div>
+    <div class="content">
+      <div class="startgrid">
+        <div class="intro">
+          <p><b>Unit 4 WB Vocabulary B pp. 37-38</b></p>
+          <p>Complete Activities 4 and 5 from Workbook pages 37&ndash;38:</p>
+          <ol start="4">
+            <li>Write each of the 12 words from Unit 4 next to its definition.</li>
+            <li>Complete the text about electric scooters using <b>seven</b> words from Activity 4.</li>
+          </ol>
+          <p style="margin-top:12px">After each activity you will see a review of your answers. When both are complete, click <b>Finish &amp; Submit</b> on the home screen.</p>
+        </div>
+        <div class="panel">
+          <h3>Your details</h3>
+          <div class="field"><label for="inName">Name</label><input id="inName" autocomplete="off"></div>
+          <div class="field"><label for="inClass">Class</label><input id="inClass" autocomplete="off"></div>
+          <button class="btn" id="btnStart" disabled>Start</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOME -->
+  <section class="screen" id="s-home">
+    <div class="band">
+      <h1><span class="chev">&rsaquo;</span>Unit 4: Transport</h1>
+      <h2>Unit 4 WB Vocabulary B pp. 37-38</h2>
+    </div>
+    <div class="content">
+      <div class="note" id="homeWho" style="font-size:18px;color:#333"></div>
+      <div id="actList"></div>
+      <div class="finishbox">
+        <div>
+          <b>Finish &amp; submit</b>
+          <div class="note" id="finishNote"></div>
+        </div>
+        <button class="btn glowbtn" id="btnFinish" disabled>Finish &amp; Submit</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACTIVITY 4 -->
+  <section class="screen" id="s-a4">
+    <div class="runhead">Unit 4: Transport</div>
+    <div class="content">
+      <h2 class="lfsub">Vocabulary focus: Transport</h2>
+      <div class="instr"><span class="n">4</span><span>Look at these <b>12</b> words from Unit 4 in the Coursebook. Write each one next to its definition.</span></div>
+      <div class="wbox" id="a4box"></div>
+      <div class="items" id="a4items"></div>
+      <div class="actfoot">
+        <button class="btn ghost small" id="a4Home">&larr; Home</button>
+        <span class="note" id="a4prog"></span>
+        <div class="footright">
+          <button class="btn" id="a4Check" disabled>Check answers</button>
+          <button class="btn" id="a4Done" style="display:none">Finish activity</button>
+        </div>
+      </div>
+      <div class="submitnote">Your work is not submitted until you click Finish &amp; Submit on the home screen.</div>
+    </div>
+  </section>
+
+  <!-- ACTIVITY 5 -->
+  <section class="screen" id="s-a5">
+    <div class="runhead">Unit 4: Transport</div>
+    <div class="content">
+      <h2 class="lfsub">Vocabulary focus: Transport</h2>
+      <div class="instr"><span class="n">5</span><span>Complete the text using <b>seven</b> words from Activity 4.</span></div>
+      <div class="wbox" id="a5box"></div>
+      <div class="tbox" id="a5text"></div>
+      <div class="fblist" id="a5fb"></div>
+      <div class="actfoot">
+        <button class="btn ghost small" id="a5Home">&larr; Home</button>
+        <span class="note" id="a5prog"></span>
+        <div class="footright">
+          <button class="btn" id="a5Check" disabled>Check answers</button>
+          <button class="btn" id="a5Done" style="display:none">Finish activity</button>
+        </div>
+      </div>
+      <div class="submitnote">Your work is not submitted until you click Finish &amp; Submit on the home screen.</div>
+    </div>
+  </section>
+
+  <!-- REVIEW -->
+  <section class="screen" id="s-review">
+    <div class="runhead">Unit 4: Transport</div>
+    <div class="content">
+      <h2 style="margin:20px 0 4px;font-weight:600" id="revTitle"></h2>
+      <div class="scoreline" id="revScore"></div>
+      <table class="rtable">
+        <thead id="revHead"></thead>
+        <tbody id="revBody"></tbody>
+      </table>
+      <div class="actfoot"><span></span><button class="btn" id="btnRevBack">Back to home</button></div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="screen" id="s-results">
+    <div class="band">
+      <h1><span class="chev">&rsaquo;</span>Results</h1>
+      <h2>Unit 4 WB Vocabulary B pp. 37-38</h2>
+    </div>
+    <div class="content">
+      <div class="resgrid">
+        <div>
+          <div class="kv">
+            <b>Name</b><span id="rName"></span>
+            <b>Class</b><span id="rClass"></span>
+            <b>Time</b><span id="rTime"></span>
+          </div>
+          <div style="margin-top:18px" class="note">Scores (Activities 4, 5)</div>
+          <div class="big" id="rScores"></div>
+          <div id="submitStatus"></div>
+          <button class="btn small" id="btnResend" style="display:none;margin-top:10px">Send again</button>
+        </div>
+        <div>
+          <h3 style="margin:0 0 6px">Review your answers</h3>
+          <ul class="sublist" id="rReview"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<button type="button" id="scrollHint">Scroll down for more &darr;</button>
+
+<script>
+/* ===================== CONFIG ===================== */
+var GAME_NAME = 'Unit 4 WB Vocabulary B pp. 37-38';
+/* NEW WB DATA sheet (WB Data Collector v3) */
+var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyLjj5ycXstxQyBeTXP6BGKuSqypnchRKtupVwvb4J7z-ydtruHviiomTw6NTcknYKL/exec';
+
+/* Word box as printed in Activity 4 (also used for Activity 5) */
+var BOX_LINES = [['campaigns','catastrophic','fatalities','initiatives'],['navigating','participant','potholed','livelihoods'],['slogan','swelled','strain','trauma']];
+
+/* ---- Activity 4 data ---- */
+var A4 = [
+  {l:'a', q:'causing sudden or great harm or destruction', a:['catastrophic'], why:'Catastrophic means causing sudden or great harm or destruction.'},
+  {l:'b', q:'describing a road that is damaged, with dents and hollows in it', a:['potholed'], why:'A potholed road is damaged and full of holes (potholes).'},
+  {l:'c', q:'finding the way', a:['navigating'], why:'Navigating means finding your way from one place to another.'},
+  {l:'d', q:'a force that puts pressure on something', a:['strain'], why:'A strain is a force that puts pressure on something.'},
+  {l:'e', q:'new plans or processes to achieve something', a:['initiatives'], why:'Initiatives are new plans or processes to achieve something.'},
+  {l:'f', q:'deaths as a result of an accident', a:['fatalities'], why:'Fatalities are deaths caused by an accident.'},
+  {l:'g', q:'a series of activities planned to achieve an aim', a:['campaigns'], why:'Campaigns are a series of activities planned to achieve an aim.'},
+  {l:'h', q:'a severe injury caused by an accident', a:['trauma'], why:'Trauma is a severe injury caused by an accident.'},
+  {l:'i', q:'a short, easily remembered phrase, often used in advertising', a:['slogan'], why:'A slogan is a short phrase that is easy to remember, often used in advertising.'},
+  {l:'j', q:'someone who takes part in a particular activity', a:['participant'], why:'A participant is someone who takes part in an activity.'},
+  {l:'k', q:'increased in size or amount', a:['swelled'], why:'Swelled means increased in size or amount.'},
+  {l:'l', q:'ways of earning money in order to survive', a:['livelihoods'], why:'Livelihoods are the ways people earn money in order to live.'}
+];
+
+/* ---- Activity 5 data ---- */
+var A5 = [
+  {l:'a', a:['swelled'], why:'The number of scooters has increased, so “has swelled” fits (has + past participle).'},
+  {l:'b', a:['potholed'], why:'An adjective is needed before “roads”: potholed roads are damaged roads full of holes.'},
+  {l:'c', a:['navigating'], why:'After “for” we use an -ing form: an e-scooter helps you find your way around town.'},
+  {l:'d', a:['catastrophic'], why:'New riders may be afraid of something terrible happening: “something catastrophic”.'},
+  {l:'e', a:['fatalities'], why:'Careless riders can cause deaths in accidents: “more fatalities”.'},
+  {l:'f', a:['initiatives','campaigns'], why:'Government initiatives are new plans to teach people skills (“campaigns” is also accepted).'},
+  {l:'g', a:['trauma'], why:'Knee and elbow pads help to prevent severe injuries: “severe trauma”.'}
+];
+var A5_TEXT = [
+  'At first we only saw them in airports, but nowadays the number of electric scooters has {a} and they are pretty much everywhere, providing a reliable means of transport. For anyone concerned about traffic jams and {b} roads, an e-scooter is an excellent solution for {c} around town.',
+  'Riding an e-scooter is no different from riding a bike. At first you may lack confidence and be afraid of something {d} happening, but you will soon realise how easy and comfortable they are to ride.',
+  'In some places e-scooters are only allowed to be driven on the road, and the last thing anyone wants is more {e} caused by careless riders. Make sure you get plenty of practice on a quiet street or somewhere without other vehicles before you go into town. Consider joining one of the many government {f} designed to teach you the skills required to be a safe, confident e-scooter rider.',
+  'A helmet is required by law when riding an e-scooter. Other protective gear, such as elbow and knee pads, are optional, but if you did fall off or were involved in an accident, these pads can go a long way to preventing severe {g}.'
+];
+/* sentence context for the review screen */
+var A5_CTX = {
+  a:'the number of electric scooters has ___',
+  b:'traffic jams and ___ roads',
+  c:'an excellent solution for ___ around town',
+  d:'be afraid of something ___ happening',
+  e:'the last thing anyone wants is more ___ caused by careless riders',
+  f:'one of the many government ___ designed to teach you the skills',
+  g:'these pads can go a long way to preventing severe ___'
+};
+
+/* ===================== FEEDBACK TRANSLATION =====================
+   Vietnamese by default; Simplified Chinese when the page is opened with ?zh.
+   Display only — never sent to the data sheet. */
+var LANG = /(^\?|&)zh(=|&|$)/i.test(location.search) ? 'zh' : 'vi';
+var TR = {
+  vi: {
+    correct: 'Đúng.', answerIs: function(a){ return 'Đáp án đúng là “' + a + '”.'; },
+    a4: {
+      a: 'Catastrophic có nghĩa là thảm khốc – gây ra tác hại hoặc sự tàn phá lớn, đột ngột.',
+      b: 'Con đường potholed là đường bị hư hỏng, đầy ổ gà.',
+      c: 'Navigating có nghĩa là tìm đường đi từ nơi này đến nơi khác.',
+      d: 'Strain là một lực tạo áp lực (sức ép) lên vật gì đó.',
+      e: 'Initiatives là những kế hoạch hoặc sáng kiến mới nhằm đạt được điều gì đó.',
+      f: 'Fatalities là những ca tử vong do tai nạn.',
+      g: 'Campaigns là một loạt hoạt động được lên kế hoạch để đạt một mục tiêu (chiến dịch).',
+      h: 'Trauma là chấn thương nghiêm trọng do tai nạn gây ra.',
+      i: 'Slogan là một cụm từ ngắn, dễ nhớ, thường dùng trong quảng cáo (khẩu hiệu).',
+      j: 'Participant là người tham gia vào một hoạt động.',
+      k: 'Swelled có nghĩa là đã tăng lên về kích thước hoặc số lượng.',
+      l: 'Livelihoods là những cách kiếm tiền để sinh sống (sinh kế).'
+    },
+    a5: {
+      a: 'Số lượng xe scooter đã tăng lên, nên dùng “has swelled” (has + quá khứ phân từ).',
+      b: 'Trước “roads” cần một tính từ: potholed roads là những con đường hư hỏng, đầy ổ gà.',
+      c: 'Sau “for” dùng dạng -ing: xe scooter giúp bạn tìm đường đi quanh thị trấn.',
+      d: 'Người mới đi có thể sợ điều gì đó khủng khiếp xảy ra: “something catastrophic”.',
+      e: 'Người lái bất cẩn có thể gây ra tử vong trong tai nạn: “more fatalities”.',
+      f: 'Government initiatives là những kế hoạch mới của chính phủ để dạy kỹ năng (chấp nhận cả “campaigns”).',
+      g: 'Miếng đệm đầu gối và khuỷu tay giúp ngăn chấn thương nghiêm trọng: “severe trauma”.'
+    }
+  },
+  zh: {
+    correct: '正确。', answerIs: function(a){ return '正确答案是“' + a + '”。'; },
+    a4: {
+      a: 'Catastrophic 意思是“灾难性的”——造成突然或巨大的伤害或破坏。',
+      b: 'Potholed 形容道路损坏、坑坑洼洼。',
+      c: 'Navigating 意思是从一个地方到另一个地方“找路、导航”。',
+      d: 'Strain 指对某物施加压力的力量（压力、负担）。',
+      e: 'Initiatives 指为实现某个目标而提出的新计划或新措施（倡议）。',
+      f: 'Fatalities 指事故造成的死亡（死亡人数）。',
+      g: 'Campaigns 指为实现某个目标而策划的一系列活动（运动、宣传活动）。',
+      h: 'Trauma 指事故造成的严重损伤（创伤）。',
+      i: 'Slogan 指简短、易记的短语，常用于广告（口号）。',
+      j: 'Participant 指参加某项活动的人（参与者）。',
+      k: 'Swelled 意思是在大小或数量上增加了。',
+      l: 'Livelihoods 指为生存而赚钱的方式（生计）。'
+    },
+    a5: {
+      a: '电动滑板车的数量增加了，所以用 “has swelled”（has + 过去分词）。',
+      b: '“roads” 前面需要形容词：potholed roads 指损坏、坑坑洼洼的道路。',
+      c: '“for” 后面用 -ing 形式：电动滑板车帮助你在城里找路出行。',
+      d: '新手可能担心发生可怕的事情：“something catastrophic”。',
+      e: '粗心的骑手可能在事故中造成死亡：“more fatalities”。',
+      f: 'Government initiatives 指政府为教授技能而推出的新计划（也接受 “campaigns”）。',
+      g: '护膝和护肘有助于防止严重创伤：“severe trauma”。'
+    }
+  }
+}[LANG];
+function trLine(t){ return t ? '<span class="tr" lang="'+(LANG==='zh'?'zh-Hans':'vi')+'">' + esc(t) + '</span>' : ''; }
+
+/* ===================== STATE ===================== */
+var student = {name:'', cls:''};
+var startTime = null, endTime = null;
+var submitted = false, submitting = false;
+var S = {
+  a4: {ans:{}, checked:false, res:{}, done:false},
+  a5: {ans:{}, checked:false, res:{}, done:false}
+};
+var DATA = {a4:A4, a5:A5};
+
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function show(id){
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  $(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function norm(s){ return String(s||'').toLowerCase().replace(/[.!?,;:"“”]/g,'').replace(/\s+/g,' ').trim(); }
+
+function filled(k){ return DATA[k].filter(function(x){ return (S[k].ans[x.l]||'').trim(); }).length; }
+function score(k){ return DATA[k].filter(function(x){ return S[k].res[x.l]; }).length; }
+function scoreText(k){ return score(k) + '/' + DATA[k].length; }
+
+/* ===================== START ===================== */
+function checkStart(){ $('btnStart').disabled = !($('inName').value.trim() && $('inClass').value.trim()); }
+$('inName').addEventListener('input', checkStart);
+$('inClass').addEventListener('input', checkStart);
+$('btnStart').addEventListener('click', function(){
+  student.name = $('inName').value.trim();
+  student.cls = $('inClass').value.trim();
+  startTime = Date.now();
+  renderHome(); show('s-home');
+});
+
+/* ===================== HOME ===================== */
+function row(num, key, title){
+  var st = S[key], n = DATA[key].length, f = filled(key), status, btns, pct;
+  if (st.done) {
+    status = '<div class="status done">Completed — ' + scoreText(key) + '</div>';
+    btns = '<button class="btn ghost small" data-rev="'+num+'">Review</button>'; pct = 100;
+  } else if (f > 0) {
+    status = '<div class="status">In progress — ' + f + '/' + n + ' answered</div>';
+    btns = '<button class="btn small" data-go="'+num+'">Continue</button>'; pct = Math.round(f/n*100);
+  } else {
+    status = '<div class="status">Not started</div>';
+    btns = '<button class="btn small" data-go="'+num+'">Start</button>'; pct = 0;
+  }
+  return '<div class="actrow"><div class="num">'+num+'</div><div><div class="title">'+title+'</div>'+status+
+    '<div class="bar"><i style="width:'+pct+'%"></i></div></div><div class="btns">'+btns+'</div></div>';
+}
+function renderHome(){
+  $('homeWho').textContent = 'Student: ' + student.name + ' · Class: ' + student.cls;
+  $('actList').innerHTML =
+    row(4, 'a4', 'Write each of the 12 words next to its definition.') +
+    row(5, 'a5', 'Complete the text using seven words from Activity 4.');
+  [].forEach.call($('actList').querySelectorAll('[data-go]'), function(b){
+    b.onclick = function(){ openAct(b.getAttribute('data-go') === '4' ? 'a4' : 'a5'); };
+  });
+  [].forEach.call($('actList').querySelectorAll('[data-rev]'), function(b){
+    b.onclick = function(){ openReview(+b.getAttribute('data-rev'), 'home'); };
+  });
+  var all = S.a4.done && S.a5.done;
+  $('btnFinish').disabled = !all || submitted;
+  $('btnFinish').textContent = submitted ? 'Submitted' : 'Finish & Submit';
+  $('finishNote').innerHTML = (all ? 'Both activities are complete. ' : 'Complete both activities to finish. ') +
+    'Your work is not submitted until you click <b>Finish &amp; Submit</b>.';
+}
+$('btnFinish').addEventListener('click', function(){ showResults(); });
+
+/* ===================== WORD BOX (strikes words already written) ===================== */
+function renderBox(k){
+  var used = {};
+  DATA[k].forEach(function(x){ var v = norm(S[k].ans[x.l]); if (v) used[v] = true; });
+  $(k+'box').innerHTML = BOX_LINES.map(function(line){
+    return '<div class="wl">' + line.map(function(w){ return '<span class="'+(used[w]?'used':'')+'">'+w+'</span>'; }).join('') + '</div>';
+  }).join('');
+}
+
+/* ===================== ACTIVITY 4 & 5 ===================== */
+function fbHtml(k, x){
+  var ok = S[k].res[x.l];
+  return '<div class="fb '+(ok?'ok':'bad')+'">'+(k==='a5'?'<b>('+x.l+')</b> ':'')+(ok ? '✓ Correct. ' : '✗ The answer is <b>'+x.a[0]+'</b>. ')+esc(x.why)+
+    trLine((ok ? TR.correct : TR.answerIs(x.a[0])) + ' ' + TR[k][x.l])+'</div>';
+}
+function gapHtml(k, x){
+  var locked = S[k].checked, v = S[k].ans[x.l] || '', cls = locked ? (S[k].res[x.l] ? ' ok' : ' bad') : '';
+  return '<input class="gap'+cls+'" data-k="'+k+'" data-l="'+x.l+'" value="'+esc(v)+'" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="Answer '+x.l+'"'+(locked?' disabled':'')+'>';
+}
+function renderA4(){
+  var h = '';
+  A4.forEach(function(x){
+    h += '<div class="item"><div class="l">'+x.l+'</div><div class="q">'+esc(x.q)+' '+gapHtml('a4', x)+(S.a4.checked?fbHtml('a4', x):'')+'</div></div>';
+  });
+  $('a4items').innerHTML = h;
+}
+function renderA5(){
+  var byL = {}; A5.forEach(function(x){ byL[x.l] = x; });
+  $('a5text').innerHTML = '<h3>Electric scooters – a guide for beginners</h3>' + A5_TEXT.map(function(p){
+    return '<p>' + esc(p).replace(/\{([a-g])\}/g, function(m, l){ return '<span class="gl">('+l+')</span>' + gapHtml('a5', byL[l]); }) + '</p>';
+  }).join('');
+  $('a5fb').innerHTML = S.a5.checked ? A5.map(function(x){ return fbHtml('a5', x); }).join('') : '';
+}
+function renderAct(k){
+  renderBox(k);
+  if (k === 'a4') renderA4(); else renderA5();
+  [].forEach.call(document.querySelectorAll('#s-'+k+' input.gap'), function(inp){
+    inp.addEventListener('input', function(){ S[k].ans[inp.getAttribute('data-l')] = inp.value; renderBox(k); footAct(k); });
+  });
+  footAct(k);
+}
+function footAct(k){
+  var n = DATA[k].length, f = filled(k), st = S[k];
+  $(k+'Check').style.display = st.checked ? 'none' : '';
+  $(k+'Check').disabled = f < n;
+  $(k+'Done').style.display = st.checked ? '' : 'none';
+  $(k+'Done').textContent = st.done ? 'See review' : 'Finish activity';
+  $(k+'prog').textContent = st.checked ? 'Score: ' + scoreText(k) : (f < n ? 'Fill all ' + n + ' gaps to check (' + f + '/' + n + ')' : 'All gaps filled — click Check answers');
+}
+function openAct(k){ renderAct(k); show('s-'+k); }
+['a4','a5'].forEach(function(k){
+  $(k+'Check').addEventListener('click', function(){
+    if (S[k].checked || filled(k) < DATA[k].length) return;
+    DATA[k].forEach(function(x){ S[k].res[x.l] = x.a.indexOf(norm(S[k].ans[x.l])) !== -1; });
+    S[k].checked = true; renderAct(k);
+  });
+  $(k+'Done').addEventListener('click', function(){ S[k].done = true; openReview(k === 'a4' ? 4 : 5, 'home'); });
+  $(k+'Home').addEventListener('click', function(){ renderHome(); show('s-home'); });
+});
+
+/* ===================== REVIEW ===================== */
+var reviewReturn = 'home';
+function openReview(n, ret){
+  reviewReturn = ret;
+  var k = n === 4 ? 'a4' : 'a5', head, body = '';
+  $('revTitle').textContent = n === 4 ? 'Review — Activity 4: Words and definitions' : 'Review — Activity 5: Electric scooters – a guide for beginners';
+  $('revScore').innerHTML = 'Score: <b>' + scoreText(k) + '</b>';
+  head = '<tr><th style="width:52px"></th><th>' + (n === 4 ? 'Definition' : 'Gap in the text') + '</th><th>Your answer</th><th>Correct answer</th><th>Explanation</th></tr>';
+  DATA[k].forEach(function(x){
+    var ok = !!S[k].res[x.l], given = (S[k].ans[x.l]||'').trim();
+    var ctx = n === 4 ? esc(x.q) : esc(A5_CTX[x.l]);
+    body += '<tr class="'+(ok?'ok':'bad')+'"><td><span class="tag '+(ok?'ok':'bad')+'">'+(n===5?'('+x.l+')':x.l)+' '+(ok?'✓':'✗')+'</span></td><td>'+ctx+'</td>'+
+            '<td class="'+(ok?'ans-ok':'ans-bad')+'">'+(given?esc(given):'—')+'</td><td><b>'+x.a.join(' / ')+'</b></td><td>'+esc(x.why)+
+            trLine((ok ? TR.correct : TR.answerIs(x.a[0])) + ' ' + TR[k][x.l])+'</td></tr>';
+  });
+  $('revHead').innerHTML = head; $('revBody').innerHTML = body;
+  $('btnRevBack').textContent = ret === 'results' ? 'Back to results' : 'Back to home';
+  show('s-review');
+}
+$('btnRevBack').addEventListener('click', function(){
+  if (reviewReturn === 'results') show('s-results');
+  else { renderHome(); show('s-home'); }
+});
+
+/* ===================== RESULTS & SUBMIT ===================== */
+function fmtTime(ms){ var s = Math.round(ms/1000); return Math.floor(s/60) + ' min ' + (s%60) + ' sec'; }
+function showResults(){
+  if (!endTime) endTime = Date.now();
+  $('rName').textContent = student.name;
+  $('rClass').textContent = student.cls;
+  $('rTime').textContent = fmtTime(endTime - startTime);
+  $('rScores').textContent = scoreText('a4') + ', ' + scoreText('a5');
+  $('rReview').innerHTML =
+    '<li><span><b>4</b> Words and definitions — '+scoreText('a4')+'</span><button class="btn ghost small" data-r="4">Review</button></li>'+
+    '<li><span><b>5</b> Electric scooters text — '+scoreText('a5')+'</span><button class="btn ghost small" data-r="5">Review</button></li>';
+  [].forEach.call($('rReview').querySelectorAll('[data-r]'), function(b){ b.onclick = function(){ openReview(+b.getAttribute('data-r'), 'results'); }; });
+  show('s-results');
+  if (!submitted && !submitting) sendResults();
+}
+
+/* One line per exercise ("Ex.4:", "Ex.5:"); wrong items as "label answer → correct". Perfect exercises are left out. */
+function buildWrongList(){
+  var out = [];
+  [['a4','Ex.4'],['a5','Ex.5']].forEach(function(p){
+    var k = p[0];
+    var miss = DATA[k].filter(function(x){ return !S[k].res[x.l]; }).map(function(x){
+      return x.l + ' ' + ((S[k].ans[x.l]||'').replace(/,/g,' ').replace(/\s+/g,' ').trim() || '(blank)') + ' → ' + x.a[0];
+    });
+    if (miss.length) out.push(p[1] + ': ' + miss.join(', '));
+  });
+  return out;
+}
+function submitGameData(data){
+  return fetch(GAME_DATA_ENDPOINT, {
+    method: 'POST', mode: 'no-cors',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+    body: JSON.stringify(data)
+  });
+}
+function sendResults(){
+  submitting = true;
+  var s = $('submitStatus');
+  s.className = 'sending'; s.textContent = 'Sending your work to your teacher… Please wait. Do not close this window.';
+  $('btnResend').style.display = 'none';
+  var secs = Math.max(0, Math.round((endTime - startTime)/1000));
+  var minutesPlayed = ('0' + Math.floor(secs/60)).slice(-2) + ':' + ('0' + (secs%60)).slice(-2);   /* MM:SS */
+  submitGameData({
+    gameName: GAME_NAME,
+    studentName: student.name,
+    class: student.cls,
+    score: scoreText('a4') + ', ' + scoreText('a5'),
+    minutesPlayed: minutesPlayed,
+    wrongQuestions: buildWrongList(),
+    attempts: 1
+  }).then(function(){
+    submitted = true; submitting = false;
+    s.className = 'ok'; s.textContent = '✓ Your results have been sent to your teacher.';
+  }).catch(function(){
+    submitting = false;
+    s.className = 'bad'; s.textContent = 'Your results could not be sent. Check your internet connection and try again.';
+    $('btnResend').style.display = 'inline-block';
+  });
+}
+$('btnResend').addEventListener('click', function(){ if (!submitted && !submitting) sendResults(); });
+
+/* ===================== No pasting into answer boxes (WB rule) ===================== */
+(function(){
+  var toast = document.createElement('div');
+  toast.id = 'noPaste'; toast.textContent = 'Please type your answer.';
+  toast.setAttribute('role', 'status');
+  document.body.appendChild(toast);
+  var timer = null;
+  function isAnswer(el){ return el && el.matches && el.matches('input.gap'); }
+  function block(e){
+    if (!isAnswer(e.target)) return;
+    e.preventDefault();
+    var r = e.target.getBoundingClientRect();
+    toast.style.left = Math.max(8, Math.min(r.left, window.innerWidth - 220)) + 'px';
+    toast.style.top = Math.max(8, r.top - 40) + 'px';
+    toast.classList.add('show');
+    clearTimeout(timer); timer = setTimeout(function(){ toast.classList.remove('show'); }, 1800);
+  }
+  document.addEventListener('paste', block, true);
+  document.addEventListener('drop', block, true);
+  document.addEventListener('dragover', function(e){ if (isAnswer(e.target)) e.preventDefault(); }, true);
+  document.addEventListener('beforeinput', function(e){
+    if (e.inputType === 'insertFromPaste' || e.inputType === 'insertFromDrop' || e.inputType === 'insertFromPasteAsQuotation') block(e);
+  }, true);
+})();
+
+/* ===================== Tablet scroll hint ===================== */
+(function(){
+  var hint = $('scrollHint'), queued = false;
+  function update(){
+    queued = false;
+    var se = document.scrollingElement || document.documentElement;
+    var left = se.scrollHeight - (window.innerHeight + window.scrollY);
+    var scr = document.querySelector('.screen.active');
+    var bar = scr && scr.querySelector('.actfoot');
+    var bottom = ((bar && bar.offsetParent) ? Math.round(bar.getBoundingClientRect().height) : 0) + 14 + 'px';
+    if (hint.style.bottom !== bottom) hint.style.bottom = bottom;
+    var on = left > 40;
+    if (hint.classList.contains('show') !== on) hint.classList.toggle('show', on);
+  }
+  function request(){ if (!queued){ queued = true; requestAnimationFrame(update); } }
+  hint.addEventListener('click', function(){ window.scrollBy({ top: Math.round(window.innerHeight * 0.7), behavior: 'smooth' }); });
+  window.addEventListener('scroll', request, { passive: true });
+  window.addEventListener('resize', request);
+  new MutationObserver(function(muts){
+    for (var i = 0; i < muts.length; i++) if (muts[i].target !== hint){ request(); return; }
+  }).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['class', 'style', 'hidden'] });
+  request();
+})();
+</script>
+</body>
+</html>
