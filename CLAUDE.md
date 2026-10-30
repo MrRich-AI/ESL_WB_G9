@@ -16,6 +16,7 @@ Richard Imbeau, IGCSE ESL teacher (Grade 9: 9A1, 9A2, 9A3; Grade 10: 10A1) at Ro
 ## Repos and layout
 - Grade 9 builds go in **ESL_WB_G9**; Grade 10 builds go in **ESL_WB_G10** (owner mrrich-ai).
 - Each build is a single self-contained `index.html` in its own folder, following the existing folder naming (e.g. `Unit_3_WB_LangFocus_A_pp29-30`, `Unit_13_WB_Reading_B_p130`).
+- **Section letters (WB builds):** when a WB build is the first for a new unit or a new section (Vocabulary, Language focus, Reading, etc.), ask Richard before building whether it gets a letter, starting with **A**. If yes, the letter goes everywhere the build is named: activity title, folder name, landing-page link and `gameName` (e.g. "Unit 3 WB Vocabulary A pp. 26-27", folder `Unit_3_WB_Vocabulary_A_pp26-27`). Later builds in the same unit and section get the next letter (B, C…) automatically, without asking — unless the build appears to skip a section (e.g. a workbook page or exercise between the last lettered build and this one has no build), in which case ask first.
 - The root `index.html` is the landing page: one card per unit (all units kept, newest first); selecting a unit shows all its builds. Add each new build to it.
 - New builds and edits: commit and push without asking (Oct 30 2026); never paste the raw HTML code in chat.
 
