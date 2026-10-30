@@ -269,6 +269,9 @@ input.gap.bad{border-bottom-color:var(--bad);color:var(--bad);font-weight:700;ba
 
 /* Tablet: keep the activity buttons pinned to the bottom of the screen while scrolling */
 .actfoot{position:sticky;bottom:0;z-index:20;background:var(--page);padding:12px 0;border-top:1.5px solid #333}
+.fpart{margin:6px 0 0}
+.fpart:first-of-type{margin-top:4px}
+.tr{display:block;margin-top:3px;font-size:.93em;font-style:italic;opacity:.9;font-weight:400}
 </style>
 </head>
 <body>
@@ -365,7 +368,17 @@ input.gap.bad{border-bottom-color:var(--bad);color:var(--bad);font-weight:700;ba
 var ACTIVITY_NAME = 'Unit 3 Exam-Style Question Writing p. 35';
 /* Gemini feedback proxy (Apps Script holds the API key; we send only the prompt) */
 var FEEDBACK_PROXY_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxEXar-cSzm0BnJYp6EYfUo9lKvcgsf5mF9aGSCvVqHqMRiIkYiNqjHaLSqzeHauffGhg/exec';
-var ESSAY_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwNhsD9-6Zxcm9zz2Rq3uCwx8jxbu3KPYcLULLtjV85zPoUsCmAp5xcNnXepWfOitUSBA/exec';
+/* TEST: new Essay Data Collector v2 */
+var ESSAY_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbw4wtgPJ7VzRGWR3zhEtggTOKbb1WpjBCejIrFnkkig3AF7-5S5-SGeMDlHjy8wReayVw/exec';
+var WORD_MIN = 120, WORD_MAX = 160;
+
+/* AI feedback translation: Vietnamese by default, Chinese with ?zh. On screen only — never sent to the sheet. */
+var LANG = /(^\?|&)zh(=|&|$)/i.test(location.search) ? 'zh' : 'vi';
+var TR = {
+  vi: { aiName: 'Vietnamese', noAI: 'Hiện chưa có nhận xét AI. Giáo viên sẽ trực tiếp xem bài viết của bạn.' },
+  zh: { aiName: 'Simplified Chinese', noAI: '目前没有 AI 评语。老师会直接批改你的作文。' }
+}[LANG];
+function trLine(t){ return t ? '<span class="tr" lang="'+(LANG==='zh'?'zh-Hans':'vi')+'">' + esc(t) + '</span>' : ''; }
 
 var TASK_HTML =
   '<div class="exambox"><div class="exbar">EXAM-STYLE QUESTION</div><div class="in">' +
@@ -389,7 +402,7 @@ var TASK = 'You and some friends recently visited an open-air market where a wid
 var student = {name:'', cls:''};
 var startTime = null, endTime = null;
 var submitted = false, submitting = false;
-var st = {essay:'', ai:null, aiState:'idle', aiError:'', finishWarned:false, done:false};
+var st = {essay:'', ai:null, aiState:'idle', aiError:'', finishWarned:false, done:false, pastes:0};
 var scoreText = 'N/A (AI feedback unavailable)';
 var feedbackText = 'N/A (AI feedback unavailable)';
 
@@ -401,6 +414,14 @@ function show(id){
   window.scrollTo(0,0);
 }
 function words(t){ t = String(t||'').trim(); return t ? t.split(/\s+/).length : 0; }
+/* AI feedback in three parts, each with its translation underneath */
+function feedbackHTML(){
+  var a = st.ai; if (!a) return '';
+  var part = function(label, en, tr){ return en ? '<div class="fpart"><b>' + label + '</b> ' + esc(en) + trLine(tr) + '</div>' : ''; };
+  return part('Content (' + a.c + '/6):', a.content, a.content_tr) +
+         part('Language (' + a.l + '/9):', a.language, a.language_tr) +
+         part('Overall:', a.overall, a.overall_tr);
+}
 
 /* ===================== START ===================== */
 function checkStart(){ $('btnStart').disabled = !($('inName').value.trim() && $('inClass').value.trim()); }
@@ -444,8 +465,8 @@ function render(){
   var h = TASK_HTML +
     '<div style="margin-left:38px;max-width:1000px"><textarea class="essay big" id="essay" spellcheck="false" aria-label="Your review"'+(locked?' disabled':'')+'>'+esc(st.essay)+'</textarea>' +
     '<div class="wc" id="wc"></div></div>';
-  if (st.ai) h += '<div class="fbox"><div class="sc">' + esc(scoreText) + '</div><div>' + esc(feedbackText) + '</div></div>';
-  else if (st.aiState === 'error') h += '<div class="fbox none">AI feedback is not available right now. Your teacher will review your writing directly.</div>';
+  if (st.ai) h += '<div class="fbox"><div class="sc">' + esc(scoreText) + '</div>' + feedbackHTML() + '</div>';
+  else if (st.aiState === 'error') h += '<div class="fbox none">AI feedback is not available right now. Your teacher will review your writing directly.' + trLine(TR.noAI) + '</div>';
   h += '<div class="aibar">';
   if (st.ai) h += '<span class="st">✓ AI feedback received. Read it, then click <b>Finish activity</b>.</span>';
   else if (st.aiState === 'loading') h += '<span class="st"><span class="spin"></span>Getting AI feedback… this can take up to a minute. Please don’t close this window.</span>';
@@ -458,6 +479,12 @@ function render(){
   $('actBody').innerHTML = h + '</div>';
   var ta = $('essay');
   ta.addEventListener('input', function(){ st.essay = ta.value; updateFoot(); });
+  /* Pasting is allowed in Essay builds, but each paste or drop is counted and sent to the teacher. */
+  ta.addEventListener('paste', function(e){
+    var t = (e.clipboardData || window.clipboardData); t = t ? t.getData('text') : '';
+    if (String(t).trim()) st.pastes++;
+  });
+  ta.addEventListener('drop', function(){ st.pastes++; });
   var b = $('btnAI'); if (b) b.onclick = getAIFeedback;
 }
 $('btnActHome').addEventListener('click', function(){ renderHome(); show('s-home'); });
@@ -492,7 +519,13 @@ function buildPrompt(){
     'Mark scheme: ' + markScheme + ' ' +
     'Student review: "' + st.essay.trim().replace(/"/g, "'") + '" ' +
     'Respond with ONLY a JSON object, no markdown, no code fences, in exactly this shape: ' +
-    '{"contentMark": <0-6 integer>, "languageMark": <0-9 integer>, "comments": "<2-4 sentences of specific, honest feedback explaining both marks, naming the actual errors or gaps that cost marks, written directly for the student>"}';
+    '{"contentMark": <0-6 integer>, "languageMark": <0-9 integer>, ' +
+    '"contentComment": "<1-2 sentences explaining the Content mark: what was relevant and developed, and what gaps cost marks>", ' +
+    '"languageComment": "<1-2 sentences explaining the Language mark, naming the actual errors or weaknesses that cost marks>", ' +
+    '"overall": "<1-2 sentences: the single most useful thing to improve next time>", ' +
+    '"contentComment_tr": "...", "languageComment_tr": "...", "overall_tr": "..."} ' +
+    'Write contentComment, languageComment and overall in English, directly for the student. Each *_tr field is a faithful, natural ' + TR.aiName +
+    ' translation of the matching English comment for a Grade 9 student; keep any quoted English words or example phrases in English inside it.';
 }
 
 function getAIFeedback(){
@@ -508,8 +541,12 @@ function getAIFeedback(){
       if (isNaN(c) || isNaN(l)) throw new Error('unreadable');
       c = Math.max(0, Math.min(6, c)); l = Math.max(0, Math.min(9, l));
       scoreText = (c + l) + '/15 (Content: ' + c + '/6, Language: ' + l + '/9)';
-      feedbackText = String(p.comments || '');
-      st.ai = {c:c, l:l}; st.aiState = 'done';
+      var S_ = function(x){ return String(x || '').trim(); };
+      st.ai = { c:c, l:l,
+        content: S_(p.contentComment), language: S_(p.languageComment), overall: S_(p.overall || p.comments),
+        content_tr: S_(p.contentComment_tr), language_tr: S_(p.languageComment_tr), overall_tr: S_(p.overall_tr) };
+      feedbackText = ['Content: ' + st.ai.content, 'Language: ' + st.ai.language, 'Overall: ' + st.ai.overall].join(' ');
+      st.aiState = 'done';
     })
     .catch(function(err){
       console.error('AI feedback failed:', err);
@@ -525,8 +562,8 @@ function openReview(ret){
   $('revBody').innerHTML =
     '<div class="scoreline">Score: <b>' + esc(scoreText) + '</b> &nbsp;·&nbsp; ' + words(st.essay) + ' words</div>' +
     '<div class="essayview">' + (st.essay.trim() ? esc(st.essay.trim()) : '(nothing written)') + '</div>' +
-    (st.ai ? '<div class="fbox" style="margin-left:0"><b>AI feedback</b><div style="margin-top:6px">' + esc(feedbackText) + '</div></div>'
-           : '<div class="fbox none" style="margin-left:0">AI feedback wasn’t available for your review. Your teacher will review your writing directly.</div>');
+    (st.ai ? '<div class="fbox" style="margin-left:0"><b>AI feedback</b><div style="margin-top:6px">' + feedbackHTML() + '</div></div>'
+           : '<div class="fbox none" style="margin-left:0">AI feedback wasn’t available for your review. Your teacher will review your writing directly.' + trLine(TR.noAI) + '</div>');
   $('btnRevBack').textContent = ret === 'results' ? 'Back to results' : 'Back to home';
   show('s-review');
 }
@@ -565,8 +602,12 @@ function sendResults(){
       studentName: student.name,
       duration: durationText,
       score: scoreText,
-      feedback: feedbackText,
-      essayResponse: st.essay.trim()
+      /* English only: translations are never sent */
+      feedback: st.ai ? { content: st.ai.content, language: st.ai.language, overall: st.ai.overall } : '',
+      essayResponse: st.essay.trim(),
+      wordMin: WORD_MIN,
+      wordMax: WORD_MAX,
+      pasted: st.pastes
     })
   }).then(function(res){
     submitted = true; submitting = false;
