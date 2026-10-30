@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 4 WB Vocabulary pp. 36-37</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#151515; --muted:#4a4a4a; --line:#c4c4c4; --page:#ffffff; --desk:#d6d6d6;
+  --ok:#17692f; --okbg:#e5f3e9; --bad:#a8231b; --badbg:#fbeae8; --soft:#f3f3f3; --pen:#1a3f8a;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{overflow-x:hidden}
+body{background:var(--desk);font-family:'Source Sans 3',Arial,Helvetica,sans-serif;color:var(--ink);font-size:18px;line-height:1.5}
+.page{max-width:1120px;margin:24px auto;background:var(--page);box-shadow:0 3px 14px rgba(0,0,0,.2);min-height:calc(100vh - 48px);padding-bottom:40px}
+.screen{display:none}
+.screen.active{display:block}
+
+/* Unit band (as on the opening page of the unit) */
+.band{background:linear-gradient(#9e9e9e 0%,#c9c9c9 40%,#efefef 80%,#fff 100%);padding:40px 56px 24px}
+.band h1{margin:0;font-weight:400;font-size:48px;letter-spacing:-.5px;line-height:1.15}
+.band h1 .chev{font-weight:300;color:#3a3a3a;margin-right:10px}
+.band h2{margin:18px 0 0;font-weight:400;font-size:31px}
+.runhead{display:flex;justify-content:flex-end;margin:30px 56px 0;padding-bottom:6px;border-bottom:1.5px solid #333;font-size:16px;font-weight:600}
+.lfsub{margin:22px 0 8px;font-weight:400;font-size:29px}
+.content{padding:18px 56px 0}
+
+/* Generic */
+.btn{font-family:inherit;font-size:17px;font-weight:600;border:2px solid #151515;background:#151515;color:#fff;padding:9px 20px;border-radius:4px;cursor:pointer;transition:transform .08s,opacity .15s}
+.btn:hover:not(:disabled){transform:translateY(-1px)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn.ghost{background:#fff;color:#151515}
+.btn.small{font-size:15px;padding:5px 14px}
+.note{font-size:15px;color:var(--muted)}
+.hand{font-family:'Patrick Hand',cursive;font-size:21px;letter-spacing:.3px;color:var(--pen)}
+
+/* Start */
+.startgrid{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:start;margin-top:10px}
+.panel{border:2px solid #222;padding:22px 26px;box-shadow:4px 4px 0 #bbb;background:#fff}
+.panel h3{margin:0 0 12px;font-size:22px}
+.field{margin-bottom:16px}
+.field label{display:block;font-weight:600;margin-bottom:4px}
+.field input{width:100%;font-family:inherit;font-size:18px;padding:8px 10px;border:1.5px solid #555;border-radius:3px;color:var(--ink)}
+.field input:focus{outline:3px solid #9a9a9a;outline-offset:1px}
+.intro p{margin:0 0 10px}
+.intro ol{margin:6px 0 0;padding-left:22px}
+
+/* Home */
+.actrow{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}
+.actrow .num{font-weight:700;font-size:22px}
+.actrow .status{font-size:15px;color:var(--muted);margin-top:2px}
+.actrow .status.done{color:var(--ok);font-weight:600}
+.actrow .btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.bar{height:8px;background:#e4e4e4;border-radius:4px;margin-top:6px;max-width:360px;overflow:hidden}
+.bar i{display:block;height:100%;background:#151515;width:0;transition:width .4s}
+.finishbox{margin-top:26px;padding:18px 22px;background:var(--soft);border-left:5px solid #151515;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* Activity common */
+.instr{display:flex;gap:16px;font-size:18px;margin:6px 0 14px}
+.instr .n{font-weight:700;min-width:22px}
+.actfoot{position:sticky;bottom:0;z-index:20;background:var(--page);padding:12px 0;border-top:1.5px solid #333;display:flex;justify-content:space-between;align-items:center;margin-top:22px;gap:14px;flex-wrap:wrap}
+.footright{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.finishwarn{font-size:15px;color:var(--bad);margin-top:6px;text-align:right;display:none}
+.submitnote{font-size:15px;color:var(--muted);margin:10px 0 0;text-align:right}
+
+/* Word box */
+.wbox{border:2.5px solid #222;box-shadow:5px 5px 0 #c9c9c9;padding:14px 22px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 24px;font-size:18px}
+.wbox span{padding:0 2px;transition:color .2s}
+.wbox span.found{text-decoration:line-through;text-decoration-thickness:2px;color:var(--ok);font-weight:600}
+.wbox span.ex{text-decoration:line-through;text-decoration-thickness:2px}
+.wbox span.missed{color:var(--bad);font-weight:600}
+
+/* Wordsearch */
+.wsgrid-wrap{display:grid;grid-template-columns:auto 1fr;gap:30px;align-items:start;margin-left:38px}
+.ws{position:relative;display:inline-block;touch-action:none;user-select:none;-webkit-user-select:none}
+.ws table{border-collapse:collapse;border:1.5px solid #333;background:#fff}
+.ws td{width:36px;height:36px;border:1px solid #444;text-align:center;vertical-align:middle;font-size:18px;color:#222;padding:0;cursor:pointer}
+.ws.locked td{cursor:default}
+.ws svg{position:absolute;left:0;top:0;pointer-events:none;overflow:visible}
+.cap{fill:rgba(255,255,255,0);stroke:#2b2b2b;stroke-width:1.8}
+.cap.found{fill:rgba(23,105,47,.12);stroke:var(--ok);stroke-width:2.2}
+.cap.ex{stroke:#555}
+.cap.missed{fill:rgba(168,35,27,.08);stroke:var(--bad);stroke-dasharray:6 4;stroke-width:2.2}
+.cap.drag{fill:rgba(26,63,138,.12);stroke:var(--pen);stroke-width:2}
+.cap.nope{fill:rgba(168,35,27,.12);stroke:var(--bad);stroke-width:2}
+.side h4{margin:0 0 8px;font-size:18px}
+.side .count{font-size:34px;font-weight:700;margin:14px 0 2px}
+.side .tip{font-size:15px;color:var(--muted);margin-top:14px}
+.anchor{fill:rgba(26,63,138,.18);stroke:var(--pen);stroke-width:2}
+
+/* Activity 2 gaps */
+.items{margin-left:38px}
+.item{display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:start;padding:12px 0 10px;border-bottom:1px dashed #e0e0e0}
+.item .l{font-weight:700;padding-top:4px}
+.item .q{padding-top:4px}
+.gap{font-family:'Patrick Hand',cursive;font-size:21px;border:0;border-bottom:2px dotted #333;width:220px;padding:1px 6px;margin:0 0 0 8px;background:#fafafa;color:var(--pen)}
+.gap.block{display:block;margin:8px 0 0}
+.gap:focus{outline:none;background:#efefef;border-bottom-style:solid}
+.gap:disabled{background:transparent}
+.gap.ok{border-bottom-color:var(--ok);color:var(--ok);background:var(--okbg)}
+.gap.bad{border-bottom-color:var(--bad);color:var(--bad);background:var(--badbg)}
+.fb{font-size:16px;margin-top:6px;padding:6px 10px;border-radius:3px;display:none;animation:pop .25s ease}
+.fb.ok{display:block;background:var(--okbg);color:var(--ok)}
+.fb.bad{display:block;background:var(--badbg);color:var(--bad)}
+@keyframes pop{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+/* Activity 3 lines */
+.rw{width:100%;min-height:52px;resize:vertical;font-family:'Patrick Hand',cursive;font-size:21px;line-height:1.35;border:0;border-bottom:2px dotted #333;background:#fafafa;padding:6px 8px;color:var(--pen)}
+.rw:focus{outline:none;background:#efefef;border-bottom-style:solid}
+.rw:disabled{background:transparent}
+.ai{margin-top:8px;padding:8px 12px;border-radius:4px;font-size:16px}
+.ai.ok{background:var(--okbg);color:var(--ok)}
+.ai.bad{background:var(--badbg);color:var(--bad)}
+.ai.none{background:var(--soft);color:#333}
+.aibar{margin:18px 0 0 38px;padding:14px 18px;background:var(--soft);border-left:5px solid #151515;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.aibar .st{font-size:16px}
+.aibar .st.err{color:var(--bad)}
+.spin{display:inline-block;width:16px;height:16px;border:3px solid #bbb;border-top-color:#151515;border-radius:50%;animation:sp 1s linear infinite;vertical-align:-3px;margin-right:8px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.tag{font-weight:700}
+.tag.ok{color:var(--ok)} .tag.bad{color:var(--bad)}
+
+/* Review */
+.scoreline{font-size:20px;margin:4px 0 16px}
+.rtable{width:100%;border-collapse:collapse;font-size:16px}
+.rtable th{text-align:left;border-bottom:2px solid #222;padding:8px;font-size:15px}
+.rtable td{border-bottom:1px solid var(--line);padding:9px 8px;vertical-align:top}
+.rtable tr.ok td:first-child{border-left:5px solid var(--ok)}
+.rtable tr.bad td:first-child{border-left:5px solid var(--bad)}
+.ans-bad{color:var(--bad);font-weight:600}
+.ans-ok{color:var(--ok);font-weight:600}
+
+/* Results */
+.resgrid{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:8px}
+.big{font-size:36px;font-weight:700;letter-spacing:.5px}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;font-size:18px}
+.kv b{font-weight:600}
+.sublist{margin:0;padding:0;list-style:none}
+.sublist li{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);gap:10px}
+#submitStatus{margin-top:14px;font-size:16px;padding:8px 12px;border-radius:3px;background:var(--soft)}
+#submitStatus.ok{background:var(--okbg);color:var(--ok)}
+#submitStatus.bad{background:var(--badbg);color:var(--bad)}
+
+@media (max-width:1000px){
+  .wsgrid-wrap{grid-template-columns:1fr;margin-left:0}
+}
+@media (max-width:820px){
+  .band,.content{padding-left:18px;padding-right:18px}
+  .runhead{margin-left:18px;margin-right:18px}
+  .band h1{font-size:34px}.band h2{font-size:24px}
+  .startgrid,.resgrid{grid-template-columns:1fr}
+  .items,.aibar{margin-left:0}
+  .ws td{width:30px;height:30px;font-size:16px}
+  .rtable{font-size:14px}
+}
+
+/* Tablet scroll hint */
+#scrollHint{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:50;display:none;margin:0;font-family:inherit;font-size:15px;font-weight:600;line-height:1;padding:10px 18px;border:2px solid #fff;border-radius:22px;background:#151515;color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.35);cursor:pointer;animation:hintBob 1.6s ease-in-out infinite}
+#scrollHint.show{display:block}
+@keyframes hintBob{0%,100%{transform:translateX(-50%)}50%{transform:translate(-50%,4px)}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- START -->
+  <section class="screen active" id="s-start">
+    <div class="band">
+      <h1><span class="chev">&rsaquo;</span>Unit 4: Transport</h1>
+      <h2>Vocabulary focus: Transport</h2>
+    </div>
+    <div class="content">
+      <div class="startgrid">
+        <div class="intro">
+          <p><b>Unit 4 WB Vocabulary pp. 36-37</b></p>
+          <p>Complete Activities 1&ndash;3 from Workbook pages 36&ndash;37:</p>
+          <ol>
+            <li>Find the 15 transport words in the wordsearch.</li>
+            <li>Decide what or who is being described.</li>
+            <li>Write sentences describing the other seven words. You will get AI feedback on your sentences.</li>
+          </ol>
+          <p style="margin-top:12px">After each activity you will see a review of your answers. When all three are complete, click <b>Finish &amp; Submit</b> on the home screen.</p>
+        </div>
+        <div class="panel">
+          <h3>Your details</h3>
+          <div class="field"><label for="inName">Name</label><input id="inName" autocomplete="off"></div>
+          <div class="field"><label for="inClass">Class</label><input id="inClass" autocomplete="off"></div>
+          <button class="btn" id="btnStart" disabled>Start</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOME -->
+  <section class="screen" id="s-home">
+    <div class="band">
+      <h1><span class="chev">&rsaquo;</span>Unit 4: Transport</h1>
+      <h2>Unit 4 WB Vocabulary pp. 36-37</h2>
+    </div>
+    <div class="content">
+      <div class="note" id="homeWho" style="font-size:18px;color:#333"></div>
+      <div id="actList"></div>
+      <div class="finishbox">
+        <div>
+          <b>Finish &amp; submit</b>
+          <div class="note" id="finishNote"></div>
+        </div>
+        <button class="btn" id="btnFinish" disabled>Finish &amp; Submit</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACTIVITY 1: WORDSEARCH -->
+  <section class="screen" id="s-a1">
+    <div class="runhead">Unit 4: Transport</div>
+    <div class="content">
+      <h2 class="lfsub">Vocabulary focus: Transport</h2>
+      <div class="instr"><span class="n">1</span><span>Find the 15 words from the box in the wordsearch. The words may appear across, down or diagonally in the grid.</span></div>
+      <div style="margin:0 0 20px 38px;max-width:640px" class="wbox" id="a1box"></div>
+      <div class="wsgrid-wrap">
+        <div class="ws" id="ws"></div>
+        <div class="side">
+          <h4>Words found</h4>
+          <div class="count" id="a1count">0/14</div>
+          <div class="note">The first word, <i>car</i>, is done for you.</div>
+          <div class="tip">Drag across the letters of a word, from its first letter to its last. Or tap the first letter, then tap the last letter.</div>
+          <div class="tip" id="a1msg" style="font-weight:600"></div>
+        </div>
+      </div>
+      <div class="actfoot">
+        <button class="btn ghost small" id="a1Home">&larr; Home</button>
+        <span class="note" id="a1prog"></span>
+        <button class="btn" id="a1Done">Finish activity</button>
+      </div>
+      <div class="finishwarn" id="a1Warn"></div>
+      <div class="submitnote">Your work is not submitted until you click Finish &amp; Submit on the home screen.</div>
+    </div>
+  </section>
+
+  <!-- ACTIVITY 2 -->
+  <section class="screen" id="s-a2">
+    <div class="runhead">Unit 4: Transport</div>
+    <div class="content">
+      <h2 class="lfsub">Vocabulary focus: Transport</h2>
+      <div class="instr"><span class="n">2</span><span>What or who is being described?</span></div>
+      <div class="items" id="a2items"></div>
+      <div class="actfoot">
+        <button class="btn ghost small" id="a2Home">&larr; Home</button>
+        <span class="note" id="a2prog"></span>
+        <div class="footright">
+          <button class="btn" id="a2Check" disabled>Check answers</button>
+          <button class="btn" id="a2Done" style="display:none">Finish activity</button>
+        </div>
+      </div>
+      <div class="submitnote">Your work is not submitted until you click Finish &amp; Submit on the home screen.</div>
+    </div>
+  </section>
+
+  <!-- ACTIVITY 3 -->
+  <section class="screen" id="s-a3">
+    <div class="runhead">Unit 4: Transport</div>
+    <div class="content">
+      <h2 class="lfsub">Vocabulary focus: Transport</h2>
+      <div class="instr"><span class="n">3</span><span>Write sentences describing the other <b>seven</b> words from Activity 1.</span></div>
+      <div id="a3body"></div>
+      <div class="actfoot">
+        <button class="btn ghost small" id="a3Home">&larr; Home</button>
+        <span class="note" id="a3prog"></span>
+        <button class="btn" id="a3Done">Finish activity</button>
+      </div>
+      <div class="finishwarn" id="a3Warn"></div>
+      <div class="submitnote">Your work is not submitted until you click Finish &amp; Submit on the home screen.</div>
+    </div>
+  </section>
+
+  <!-- REVIEW -->
+  <section class="screen" id="s-review">
+    <div class="runhead">Unit 4: Transport</div>
+    <div class="content">
+      <h2 style="margin:20px 0 4px;font-weight:600" id="revTitle"></h2>
+      <div class="scoreline" id="revScore"></div>
+      <table class="rtable">
+        <thead id="revHead"></thead>
+        <tbody id="revBody"></tbody>
+      </table>
+      <div class="actfoot"><span></span><button class="btn" id="btnRevBack">Back to home</button></div>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="screen" id="s-results">
+    <div class="band">
+      <h1><span class="chev">&rsaquo;</span>Results</h1>
+      <h2>Unit 4 WB Vocabulary pp. 36-37</h2>
+    </div>
+    <div class="content">
+      <div class="resgrid">
+        <div>
+          <div class="kv">
+            <b>Name</b><span id="rName"></span>
+            <b>Class</b><span id="rClass"></span>
+            <b>Time</b><span id="rTime"></span>
+          </div>
+          <div style="margin-top:18px" class="note">Scores (Activities 1, 2, 3)</div>
+          <div class="big" id="rScores"></div>
+          <div id="submitStatus">Sending your results…</div>
+          <button class="btn small" id="btnResend" style="display:none;margin-top:10px">Send again</button>
+        </div>
+        <div>
+          <h3 style="margin:0 0 6px">Review your answers</h3>
+          <ul class="sublist" id="rReview"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<button type="button" id="scrollHint">Scroll down for more &darr;</button>
+
+<script>
+/* ===================== CONFIG ===================== */
+var GAME_NAME = 'Unit 4 WB Vocabulary pp. 36-37';
+/* TEST: new WB Data Collector v2 (NEW WB DATA sheet) */
+var GAME_DATA_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyLjj5ycXstxQyBeTXP6BGKuSqypnchRKtupVwvb4J7z-ydtruHviiomTw6NTcknYKL/exec';
+/* Gemini feedback proxy (Apps Script holds the API key; we send only the prompt) */
+var FEEDBACK_PROXY_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxEXar-cSzm0BnJYp6EYfUo9lKvcgsf5mF9aGSCvVqHqMRiIkYiNqjHaLSqzeHauffGhg/exec';
+
+/* ---- Activity 1 data ---- */
+var GRID = [
+  'FANBWUIMCOACHWYOLN','FFGAIVQBCMWHDHZPIP','KXELPDCGGYYEQFDANK','PMWLHSOBVJWLZEBSEK',
+  'YKPORZNOTUIIARTSRO','KAUOXFDAXHICPRLEKU','XACNVVUTVTGOLYONAP','CVGHRVCUDRZPURRGDI',
+  'AQGHTVTLHAETEEREWL','RFHSQIOMSMEEUFYRPO','OPNHWTRMBKRRRWBVWT','BICYCLEEDRIVERALUH'
+];
+var ROWS = 12, COLS = 18, CELL = 36;
+/* box order as printed; r,c = first letter (0-based), d = direction */
+var WORDS = [
+  {w:'car', r:7, c:0, d:[1,0], ex:true},
+  {w:'coach', r:0, c:8, d:[0,1]},
+  {w:'liner', r:0, c:16, d:[1,0]},
+  {w:'driver', r:11, c:8, d:[0,1]},
+  {w:'bicycle', r:11, c:0, d:[0,1]},
+  {w:'ferry', r:2, c:13, d:[1,0]},
+  {w:'helicopter', r:1, c:11, d:[1,0]},
+  {w:'balloon', r:0, c:3, d:[1,0]},
+  {w:'lorry', r:5, c:14, d:[1,0]},
+  {w:'passenger', r:1, c:15, d:[1,0]},
+  {w:'pilot', r:6, c:17, d:[1,0]},
+  {w:'boat', r:3, c:7, d:[1,0]},
+  {w:'tram', r:6, c:9, d:[1,0]},
+  {w:'conductor', r:2, c:6, d:[1,0]},
+  {w:'yacht', r:4, c:0, d:[1,1]}
+];
+var BOX_LINES = [['car','coach','liner','driver','bicycle','ferry'],['helicopter','balloon','lorry','passenger','pilot'],['boat','tram','conductor','yacht']];
+var A1_TOTAL = 14;
+
+/* ---- Activity 2 data ---- */
+var A2 = [
+  {l:'a', q:'It travels on water and carries people, goods and vehicles.', a:['ferry'], why:'A ferry is a boat that carries people, goods and vehicles across water.'},
+  {l:'b', q:'Many people use one of these as their own personal method of transport.', a:['car'], why:'A car is the most common personal (private) method of transport.', block:true},
+  {l:'c', q:'It has two wheels and usually only carries one person.', a:['bicycle','bike'], why:'A bicycle has two wheels and is ridden by one person.'},
+  {l:'d', q:'This person flies planes.', a:['pilot'], why:'A pilot is the person who flies a plane.'},
+  {l:'e', q:'This is used as a form of aviation transport, but often for entertainment or leisure.', a:['balloon','hot-air balloon','hot air balloon'], why:'A (hot-air) balloon flies, but people mostly ride in one for fun and sightseeing.', block:true},
+  {l:'f', q:'This person checks travel tickets on transport.', a:['conductor'], why:'A conductor checks passengers’ tickets on a bus or train.'},
+  {l:'g', q:'This type of vehicle travels on water.', a:['boat'], why:'Boat is the general word for any vehicle that travels on water.'},
+  {l:'h', q:'It can travel long distances by road quickly and efficiently, with many passengers.', a:['coach'], why:'A coach is a comfortable bus for long journeys by road with many passengers.', block:true}
+];
+
+/* ---- Activity 3 data ---- */
+var A3_N = 7;
+var A3_WORDS = ['liner','driver','helicopter','lorry','passenger','tram','yacht'];
+var A3_MODELS = {
+  liner: 'A large passenger ship that carries people on long voyages or cruises.',
+  driver: 'This person controls a car, bus or lorry.',
+  helicopter: 'It flies using large blades that turn on top, and it can take off straight up.',
+  lorry: 'A large road vehicle that carries goods from one place to another.',
+  passenger: 'A person who travels in a vehicle but is not driving it.',
+  tram: 'It runs on rails along city streets and is usually powered by electricity.',
+  yacht: 'A sailing boat that is often used for racing or for leisure.'
+};
+
+/* ===================== STATE ===================== */
+var student = {name:'', cls:''};
+var startTime = null, endTime = null;
+var submitted = false, submitting = false;
+var S = {
+  a1: {found:{}, done:false, warned:false},
+  a2: {ans:{}, checked:false, res:{}, done:false},
+  a3: {draft:{}, ai:null, aiState:'idle', aiError:'', warned:false, done:false}
+};
+
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function show(id){
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  $(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function norm(s){ return String(s||'').toLowerCase().replace(/[.!?,]/g,'').replace(/\s+/g,' ').trim().replace(/^(a|an|the) /,''); }
+
+/* ---- scores ---- */
+function a1Score(){ return WORDS.filter(function(x){ return !x.ex && S.a1.found[x.w]; }).length; }
+function a2Score(){ return A2.filter(function(x){ return S.a2.res[x.l]; }).length; }
+function a3Written(){ var n=0; for (var i=1;i<=A3_N;i++) if ((S.a3.draft['s'+i]||'').trim()) n++; return n; }
+function a3Score(){ if (!S.a3.ai) return null; var n=0; for (var i=1;i<=A3_N;i++){ var r=S.a3.ai['s'+i]; if (r && r.correct) n++; } return n; }
+function a1Text(){ return a1Score() + '/' + A1_TOTAL; }
+function a2Text(){ return a2Score() + '/' + A2.length; }
+function a3Text(){ var s=a3Score(); return s === null ? 'not marked' : s + '/' + A3_N; }
+
+/* ===================== START ===================== */
+function checkStart(){ $('btnStart').disabled = !($('inName').value.trim() && $('inClass').value.trim()); }
+$('inName').addEventListener('input', checkStart);
+$('inClass').addEventListener('input', checkStart);
+$('btnStart').addEventListener('click', function(){
+  student.name = $('inName').value.trim();
+  student.cls = $('inClass').value.trim();
+  startTime = Date.now();
+  renderHome(); show('s-home');
+});
+
+/* ===================== HOME ===================== */
+function row(num, title, done, scoreTxt, progN, progT, progLbl, goFn, revFn){
+  var status, btns, pct;
+  if (done) {
+    status = '<div class="status done">Completed — ' + scoreTxt + '</div>';
+    btns = '<button class="btn ghost small" data-rev="'+num+'">Review</button>'; pct = 100;
+  } else if (progN > 0) {
+    status = '<div class="status">In progress — ' + progN + '/' + progT + ' ' + progLbl + '</div>';
+    btns = '<button class="btn small" data-go="'+num+'">Continue</button>'; pct = Math.round(progN/progT*100);
+  } else {
+    status = '<div class="status">Not started</div>';
+    btns = '<button class="btn small" data-go="'+num+'">Start</button>'; pct = 0;
+  }
+  return '<div class="actrow"><div class="num">'+num+'</div><div><div class="title">'+title+'</div>'+status+
+    '<div class="bar"><i style="width:'+pct+'%"></i></div></div><div class="btns">'+btns+'</div></div>';
+}
+function renderHome(){
+  $('homeWho').textContent = 'Student: ' + student.name + ' · Class: ' + student.cls;
+  var a2filled = A2.filter(function(x){ return (S.a2.ans[x.l]||'').trim(); }).length;
+  $('actList').innerHTML =
+    row(1, 'Find the 15 words from the box in the wordsearch.', S.a1.done, a1Text(), a1Score(), A1_TOTAL, 'found') +
+    row(2, 'What or who is being described?', S.a2.done, a2Text(), a2filled, A2.length, 'answered') +
+    row(3, 'Write sentences describing the other seven words from Activity 1.', S.a3.done, a3Text(), a3Written(), A3_N, 'written');
+  [].forEach.call($('actList').querySelectorAll('[data-go]'), function(b){
+    b.onclick = function(){ var n=b.getAttribute('data-go'); if (n==='1') openA1(); else if (n==='2') openA2(); else openA3(); };
+  });
+  [].forEach.call($('actList').querySelectorAll('[data-rev]'), function(b){
+    b.onclick = function(){ openReview(+b.getAttribute('data-rev'), 'home'); };
+  });
+  var all = S.a1.done && S.a2.done && S.a3.done;
+  $('btnFinish').disabled = !all || submitted;
+  $('btnFinish').textContent = submitted ? 'Submitted' : 'Finish & Submit';
+  $('finishNote').innerHTML = (all ? 'All three activities are complete. ' : 'Complete all three activities to finish. ') +
+    'Your work is not submitted until you click <b>Finish &amp; Submit</b>.';
+}
+$('btnFinish').addEventListener('click', function(){ showResults(); });
+
+/* ===================== ACTIVITY 1: WORDSEARCH ===================== */
+function cellsOf(x){ var out=[]; for (var i=0;i<x.w.length;i++) out.push([x.r+x.d[0]*i, x.c+x.d[1]*i]); return out; }
+function center(r,c){ return [c*CELL + CELL/2, r*CELL + CELL/2]; }
+function capsule(r0,c0,r1,c1,cls){
+  var p=center(r0,c0), q=center(r1,c1), h=CELL-6;
+  var len=Math.hypot(q[0]-p[0], q[1]-p[1]), ang=Math.atan2(q[1]-p[1], q[0]-p[0])*180/Math.PI;
+  return '<rect class="cap '+cls+'" x="'+(-h/2)+'" y="'+(-h/2)+'" width="'+(len+h)+'" height="'+h+'" rx="'+(h/2)+'" ry="'+(h/2)+
+         '" transform="translate('+p[0]+' '+p[1]+') rotate('+ang+')"/>';
+}
+var ws = {start:null, end:null, dragging:false, anchor:null, nope:null};
+
+function openA1(){
+  CELL = window.innerWidth <= 820 ? 30 : 36;
+  $('a1Warn').style.display = 'none';
+  var t = '<table>';
+  for (var r=0;r<ROWS;r++){ t += '<tr>'; for (var c=0;c<COLS;c++) t += '<td data-r="'+r+'" data-c="'+c+'">'+GRID[r][c]+'</td>'; t += '</tr>'; }
+  t += '</table><svg id="wsSvg"></svg>';
+  $('ws').innerHTML = t;
+  $('ws').classList.toggle('locked', S.a1.done);
+  show('s-a1');
+  /* measure the real cell size (screen must be visible) so the outlines line up */
+  var tbl = $('ws').querySelector('table'), first = tbl.rows[0].cells[0], next = tbl.rows[0].cells[1];
+  CELL = (next.getBoundingClientRect().left - first.getBoundingClientRect().left) || CELL;
+  var off = first.getBoundingClientRect(), wrap = $('ws').getBoundingClientRect();
+  var svg = $('wsSvg');
+  svg.style.left = (off.left - wrap.left) + 'px'; svg.style.top = (off.top - wrap.top) + 'px';
+  svg.setAttribute('width', CELL*COLS); svg.setAttribute('height', CELL*ROWS);
+  drawA1();
+}
+function drawA1(){
+  var svg = '';
+  WORDS.forEach(function(x){
+    var cs = cellsOf(x), a = cs[0], b = cs[cs.length-1];
+    if (x.ex) svg += capsule(a[0],a[1],b[0],b[1],'ex');
+    else if (S.a1.found[x.w]) svg += capsule(a[0],a[1],b[0],b[1],'found');
+    else if (S.a1.done) svg += capsule(a[0],a[1],b[0],b[1],'missed');
+  });
+  if (ws.nope) svg += capsule(ws.nope[0],ws.nope[1],ws.nope[2],ws.nope[3],'nope');
+  if (ws.dragging && ws.start && ws.end) svg += capsule(ws.start[0],ws.start[1],ws.end[0],ws.end[1],'drag');
+  if (ws.anchor) { var p=center(ws.anchor[0],ws.anchor[1]); svg += '<circle class="anchor" cx="'+p[0]+'" cy="'+p[1]+'" r="'+(CELL/2-3)+'"/>'; }
+  var el = $('wsSvg'); if (el) el.innerHTML = svg;
+  var box = '';
+  BOX_LINES.forEach(function(line){
+    box += '<div style="flex-basis:100%;display:flex;justify-content:center;gap:6px 28px;flex-wrap:wrap">';
+    line.forEach(function(w){
+      var cls = w === 'car' ? 'ex' : (S.a1.found[w] ? 'found' : (S.a1.done ? 'missed' : ''));
+      box += '<span class="'+cls+'">'+w+'</span>';
+    });
+    box += '</div>';
+  });
+  $('a1box').innerHTML = box;
+  $('a1count').textContent = a1Text();
+  $('a1prog').textContent = S.a1.done ? 'Completed — ' + a1Text() : 'Found ' + a1Text();
+  $('a1Done').textContent = S.a1.done ? 'See review' : 'Finish activity';
+}
+function cellFromEvent(e){
+  var el = document.elementFromPoint(e.clientX, e.clientY);
+  if (el && el.tagName === 'TD' && el.hasAttribute('data-r')) return [+el.getAttribute('data-r'), +el.getAttribute('data-c')];
+  /* outside the grid: clamp from the table rectangle */
+  var tbl = $('ws').querySelector('table'); if (!tbl) return null;
+  var rc = tbl.getBoundingClientRect();
+  var c = Math.floor((e.clientX - rc.left)/CELL), r = Math.floor((e.clientY - rc.top)/CELL);
+  return [Math.max(0,Math.min(ROWS-1,r)), Math.max(0,Math.min(COLS-1,c))];
+}
+/* snap the end cell onto one of the 8 straight directions */
+function snap(s, e){
+  var dr = e[0]-s[0], dc = e[1]-s[1];
+  if (!dr && !dc) return e.slice();
+  var ang = Math.round(Math.atan2(dr, dc)/(Math.PI/4)) * (Math.PI/4);
+  var ur = Math.round(Math.sin(ang)), uc = Math.round(Math.cos(ang));
+  var n = Math.max(Math.abs(dr), Math.abs(dc));
+  var r = s[0]+ur*n, c = s[1]+uc*n;
+  while ((r<0||r>=ROWS||c<0||c>=COLS) && n>0){ n--; r = s[0]+ur*n; c = s[1]+uc*n; }
+  return [r,c];
+}
+function tryWord(s, e){
+  var dr = Math.sign(e[0]-s[0]), dc = Math.sign(e[1]-s[1]);
+  var n = Math.max(Math.abs(e[0]-s[0]), Math.abs(e[1]-s[1]));
+  var str = '';
+  for (var i=0;i<=n;i++) str += GRID[s[0]+dr*i][s[1]+dc*i];
+  str = str.toLowerCase();
+  var rev = str.split('').reverse().join('');
+  var hit = null;
+  WORDS.forEach(function(x){
+    if (x.ex || S.a1.found[x.w]) return;
+    if (x.w === str || x.w === rev) {
+      var cs = cellsOf(x), a = cs[0], b = cs[cs.length-1];
+      var same = (a[0]===s[0]&&a[1]===s[1]&&b[0]===e[0]&&b[1]===e[1]) || (b[0]===s[0]&&b[1]===s[1]&&a[0]===e[0]&&a[1]===e[1]);
+      if (same) hit = x;
+    }
+  });
+  if (hit) {
+    S.a1.found[hit.w] = true;
+    $('a1msg').style.color = 'var(--ok)'; $('a1msg').textContent = '✓ You found “' + hit.w + '”!';
+  } else {
+    if (str.length > 1) {
+      ws.nope = [s[0],s[1],e[0],e[1]];
+      $('a1msg').style.color = 'var(--bad)'; $('a1msg').textContent = 'That isn’t one of the words. Try again.';
+      setTimeout(function(){ ws.nope = null; drawA1(); }, 650);
+    }
+  }
+  drawA1();
+}
+$('ws').addEventListener('pointerdown', function(e){
+  if (S.a1.done) return;
+  var cell = cellFromEvent(e); if (!cell) return;
+  e.preventDefault();
+  if (ws.anchor) {                         /* tap-tap mode: second tap ends the selection */
+    var a = ws.anchor; ws.anchor = null;
+    if (a[0]===cell[0] && a[1]===cell[1]) { drawA1(); return; }
+    tryWord(a, snap(a, cell)); return;
+  }
+  ws.start = cell; ws.end = cell; ws.dragging = true;
+  try { $('ws').setPointerCapture(e.pointerId); } catch(err){}
+  drawA1();
+});
+$('ws').addEventListener('pointermove', function(e){
+  if (!ws.dragging) return;
+  var cell = cellFromEvent(e); if (!cell) return;
+  var sn = snap(ws.start, cell);
+  if (sn[0] !== ws.end[0] || sn[1] !== ws.end[1]) { ws.end = sn; drawA1(); }
+});
+function endDrag(){
+  if (!ws.dragging) return;
+  ws.dragging = false;
+  var s = ws.start, e = ws.end;
+  if (s[0]===e[0] && s[1]===e[1]) { ws.anchor = s; drawA1(); return; }
+  tryWord(s, e);
+}
+$('ws').addEventListener('pointerup', endDrag);
+$('ws').addEventListener('pointercancel', function(){ ws.dragging = false; drawA1(); });
+
+$('a1Home').addEventListener('click', function(){ ws.anchor = null; renderHome(); show('s-home'); });
+$('a1Done').addEventListener('click', function(){
+  if (S.a1.done) { openReview(1, 'home'); return; }
+  if (a1Score() < A1_TOTAL && !S.a1.warned) {
+    $('a1Warn').textContent = 'You have found ' + a1Text() + ' words. Click Finish activity again to finish now — you can’t come back to find more.';
+    $('a1Warn').style.display = 'block'; S.a1.warned = true; return;
+  }
+  S.a1.done = true; ws.anchor = null;
+  openReview(1, 'home');
+});
+
+/* ===================== ACTIVITY 2 ===================== */
+function openA2(){ renderA2(); show('s-a2'); }
+function renderA2(){
+  var locked = S.a2.checked, h = '';
+  A2.forEach(function(x){
+    var v = S.a2.ans[x.l] || '', cls = '', fb = '';
+    if (locked) {
+      var ok = S.a2.res[x.l]; cls = ok ? ' ok' : ' bad';
+      fb = '<div class="fb '+(ok?'ok':'bad')+'">'+(ok ? '✓ Correct. ' : '✗ The answer is <b>'+x.a[0]+'</b>. ')+esc(x.why)+'</div>';
+    }
+    h += '<div class="item"><div class="l">'+x.l+'</div><div class="q">'+esc(x.q)+
+         '<input class="gap'+(x.block?' block':'')+cls+'" data-l="'+x.l+'" value="'+esc(v)+'" autocomplete="off" spellcheck="false" aria-label="Answer '+x.l+'"'+(locked?' disabled':'')+'>'+fb+'</div></div>';
+  });
+  $('a2items').innerHTML = h;
+  [].forEach.call($('a2items').querySelectorAll('input'), function(inp){
+    inp.addEventListener('input', function(){ S.a2.ans[inp.getAttribute('data-l')] = inp.value; footA2(); });
+  });
+  footA2();
+}
+function footA2(){
+  var filled = A2.filter(function(x){ return (S.a2.ans[x.l]||'').trim(); }).length;
+  $('a2Check').style.display = S.a2.checked ? 'none' : '';
+  $('a2Check').disabled = filled < A2.length;
+  $('a2Done').style.display = S.a2.checked ? '' : 'none';
+  $('a2Done').textContent = S.a2.done ? 'See review' : 'Finish activity';
+  $('a2prog').textContent = S.a2.checked ? 'Score: ' + a2Text() : (filled < A2.length ? 'Answer all ' + A2.length + ' to check (' + filled + '/' + A2.length + ')' : 'All answered — click Check answers');
+}
+$('a2Check').addEventListener('click', function(){
+  if (S.a2.checked) return;
+  A2.forEach(function(x){ S.a2.res[x.l] = x.a.indexOf(norm(S.a2.ans[x.l])) !== -1; });
+  S.a2.checked = true; renderA2();
+});
+$('a2Done').addEventListener('click', function(){ S.a2.done = true; openReview(2, 'home'); });
+$('a2Home').addEventListener('click', function(){ renderHome(); show('s-home'); });
+
+/* ===================== ACTIVITY 3 (AI feedback) ===================== */
+function openA3(){ $('a3Warn').style.display = 'none'; renderA3(); show('s-a3'); }
+function footA3(){
+  $('a3prog').textContent = S.a3.ai ? 'AI score: ' + a3Text() : 'Written ' + a3Written() + '/' + A3_N;
+  $('a3Done').textContent = S.a3.done ? 'See review' : 'Finish activity';
+}
+function renderA3(){
+  var locked = !!S.a3.ai || S.a3.aiState === 'loading' || S.a3.done;
+  var h = '<div class="items">';
+  for (var i=1;i<=A3_N;i++){
+    var id = 's'+i, r = S.a3.ai && S.a3.ai[id], fb = '';
+    if (S.a3.ai) {
+      fb = r ? '<div class="ai '+(r.correct?'ok':'bad')+'">'+(r.correct?'✓ ':'✗ ')+(r.word && r.word!=='none' ? '<b>'+esc(r.word)+'</b> — ' : '')+esc(r.comment)+'</div>'
+             : '<div class="ai none">No AI comment came back for this sentence. Your teacher will check it.</div>';
+    }
+    h += '<div class="item"><div class="l">'+i+'</div><div class="q"><textarea class="rw" data-id="'+id+'" spellcheck="false" aria-label="Sentence '+i+'"'+(locked?' disabled':'')+'>'+esc(S.a3.draft[id]||'')+'</textarea>'+fb+'</div></div>';
+  }
+  h += '</div><div class="aibar">';
+  if (S.a3.ai) {
+    h += '<span class="st">✓ AI feedback received. Read the comments, then click <b>Finish activity</b>.</span>';
+  } else if (S.a3.aiState === 'loading') {
+    h += '<span class="st"><span class="spin"></span>Getting AI feedback… this can take up to a minute. Please don’t close this window.</span>';
+  } else if (!S.a3.done) {
+    h += '<button class="btn" id="btnAI"'+(a3Written() < A3_N ? ' disabled' : '')+'>'+(S.a3.aiState==='error'?'Try again for AI feedback':'Get AI feedback')+'</button>';
+    h += '<span class="st'+(S.a3.aiState==='error'?' err':'')+'">' + (S.a3.aiState === 'error'
+      ? esc(S.a3.aiError) + ' You can try again, or click Finish activity — your sentences will still be sent to your teacher.'
+      : 'Write all seven sentences, then get AI feedback. You only get feedback once, so check your work first.') + '</span>';
+  } else {
+    h += '<span class="st">This activity is finished. AI feedback wasn’t received — your teacher will check your sentences.</span>';
+  }
+  $('a3body').innerHTML = h + '</div>';
+  [].forEach.call($('a3body').querySelectorAll('textarea'), function(ta){
+    ta.addEventListener('input', function(){
+      S.a3.draft[ta.getAttribute('data-id')] = ta.value;
+      var b = $('btnAI'); if (b) b.disabled = a3Written() < A3_N;
+      footA3();
+    });
+  });
+  var b = $('btnAI'); if (b) b.onclick = getAIFeedback;
+  footA3();
+}
+$('a3Home').addEventListener('click', function(){ renderHome(); show('s-home'); });
+$('a3Done').addEventListener('click', function(){
+  if (S.a3.done) { openReview(3, 'home'); return; }
+  if (S.a3.aiState === 'loading' && !S.a3.warned) {
+    $('a3Warn').textContent = 'AI feedback is still loading. Click Finish activity again to continue without waiting.';
+    $('a3Warn').style.display = 'block'; S.a3.warned = true; return;
+  }
+  if (!S.a3.ai && S.a3.aiState !== 'loading' && !S.a3.warned) {
+    $('a3Warn').textContent = 'You haven’t received AI feedback yet. Click Finish activity again to continue without it.';
+    $('a3Warn').style.display = 'block'; S.a3.warned = true; return;
+  }
+  S.a3.done = true;
+  openReview(3, 'home');
+});
+
+function buildPrompt(){
+  var lines = [];
+  for (var i=1;i<=A3_N;i++) lines.push('s'+i+') "' + String(S.a3.draft['s'+i]||'').trim().replace(/"/g,"'") + '"');
+  return 'You are an experienced, fair Cambridge IGCSE ESL teacher checking a Grade 9 workbook vocabulary exercise on transport. ' +
+    'Activity 1 had 15 words: car, coach, liner, driver, bicycle, ferry, helicopter, balloon, lorry, passenger, pilot, boat, tram, conductor, yacht. ' +
+    'Activity 2 already described eight of them (ferry, car, bicycle, pilot, balloon, conductor, boat, coach) with clue sentences such as "This person flies planes." and "It has two wheels and usually only carries one person." ' +
+    'Activity 3 task: "Write sentences describing the other seven words from Activity 1." The seven remaining words are: liner, driver, helicopter, lorry, passenger, tram, yacht. ' +
+    'The student wrote seven sentences, below. For EACH sentence decide which of the seven remaining words it describes (or "none"). Mark it correct ONLY if ALL of these are true: ' +
+    '(1) it clearly and accurately describes one of the seven remaining words, so a classmate could guess the word (it may or may not name the word itself); ' +
+    '(2) that word has not already been described by one of the student\'s EARLIER sentences in this list (a repeat is incorrect); ' +
+    '(3) it does not describe one of the Activity 2 words instead; ' +
+    '(4) it is the student\'s own complete, meaningful sentence and is grammatically acceptable. Ignore small spelling slips that do not affect the meaning. A blank or nonsense answer is incorrect. ' +
+    'Write each comment directly to the student in 1-2 short, simple sentences (Grade 9 ESL level): if correct, say what makes the description work; if incorrect, explain exactly what is wrong and give one improved version. ' +
+    '\n\nSentences:\n' + lines.join('\n') + '\n\n' +
+    'Respond with ONLY a JSON object, no markdown, no code fences, in exactly this shape: ' +
+    '{"items":[{"id":"s1","word":"tram","correct":true,"comment":"..."},{"id":"s2","word":"none","correct":false,"comment":"..."}]} with one entry for each id s1 to s7. "word" must be one of: liner, driver, helicopter, lorry, passenger, tram, yacht, none.';
+}
+function getAIFeedback(){
+  if (S.a3.aiState === 'loading' || S.a3.ai) return;
+  S.a3.aiState = 'loading'; S.a3.aiError = '';
+  renderA3();
+  fetch(FEEDBACK_PROXY_ENDPOINT, { method: 'POST', body: JSON.stringify({ prompt: buildPrompt() }) })
+    .then(function(res){ if (!res.ok) throw new Error('status ' + res.status); return res.json(); })
+    .then(function(data){
+      if (data && data.error) throw new Error(data.message || data.error);
+      if (typeof data === 'string') data = JSON.parse(data);
+      var items = data && data.items;
+      if (!items || !items.length) throw new Error('empty');
+      var ids = [], map = {};
+      for (var i=1;i<=A3_N;i++) ids.push('s'+i);
+      items.forEach(function(x, i){
+        if (!x) return;
+        var id = String(x.id || '').toLowerCase().trim();
+        if (ids.indexOf(id) === -1) id = ids[i];
+        var w = String(x.word || 'none').toLowerCase().trim();
+        if (A3_WORDS.indexOf(w) === -1) w = 'none';
+        if (id) map[id] = { word: w, correct: x.correct === true || x.correct === 'true', comment: String(x.comment || '') };
+      });
+      if (!Object.keys(map).length) throw new Error('unreadable');
+      S.a3.ai = map; S.a3.aiState = 'done';
+    })
+    .catch(function(err){
+      console.error('AI feedback failed:', err);
+      S.a3.aiState = 'error';
+      S.a3.aiError = 'AI feedback isn’t available right now.';
+    })
+    .then(function(){
+      if ($('s-a3').classList.contains('active')) renderA3();
+      if ($('s-review').classList.contains('active') && reviewAct === 3) openReview(3, reviewReturn);
+      if ($('s-home').classList.contains('active')) renderHome();
+    });
+}
+
+/* ===================== REVIEW ===================== */
+var reviewReturn = 'home', reviewAct = 0;
+function dirText(x){
+  var d = x.d;
+  if (d[0]===0) return 'across, row ' + (x.r+1) + ', starting at column ' + (x.c+1);
+  if (d[1]===0) return 'down, column ' + (x.c+1) + ', starting at row ' + (x.r+1);
+  return 'diagonally (down and to the right), starting at row ' + (x.r+1) + ', column ' + (x.c+1);
+}
+function openReview(n, ret){
+  reviewReturn = ret; reviewAct = n;
+  var head = '', body = '';
+  if (n === 1) {
+    $('revTitle').textContent = 'Review — Activity 1: Wordsearch';
+    $('revScore').innerHTML = 'Score: <b>' + a1Text() + '</b> words found';
+    head = '<tr><th style="width:44px"></th><th>Word</th><th>Your answer</th><th>Where it is</th></tr>';
+    var k = 0;
+    WORDS.forEach(function(x){
+      if (x.ex) return; k++;
+      var ok = !!S.a1.found[x.w];
+      body += '<tr class="'+(ok?'ok':'bad')+'"><td><span class="tag '+(ok?'ok':'bad')+'">'+k+' '+(ok?'✓':'✗')+'</span></td><td><b>'+x.w+'</b></td>'+
+              '<td class="'+(ok?'ans-ok':'ans-bad')+'">'+(ok?'Found':'Not found')+'</td><td>'+x.w.toUpperCase()+' runs '+dirText(x)+'.</td></tr>';
+    });
+  } else if (n === 2) {
+    $('revTitle').textContent = 'Review — Activity 2: What or who is being described?';
+    $('revScore').innerHTML = 'Score: <b>' + a2Text() + '</b>';
+    head = '<tr><th style="width:44px"></th><th>Description</th><th>Your answer</th><th>Correct answer</th><th>Explanation</th></tr>';
+    A2.forEach(function(x){
+      var ok = !!S.a2.res[x.l], given = (S.a2.ans[x.l]||'').trim();
+      body += '<tr class="'+(ok?'ok':'bad')+'"><td><span class="tag '+(ok?'ok':'bad')+'">'+x.l+' '+(ok?'✓':'✗')+'</span></td><td>'+esc(x.q)+'</td>'+
+              '<td class="'+(ok?'ans-ok':'ans-bad')+'">'+(given?esc(given):'—')+'</td><td><b>'+x.a[0]+'</b></td><td>'+esc(x.why)+'</td></tr>';
+    });
+  } else {
+    $('revTitle').textContent = 'Review — Activity 3: Describe the other seven words';
+    $('revScore').innerHTML = 'Score: <b>' + a3Text() + '</b>';
+    head = '<tr><th style="width:44px"></th><th>Your sentence</th><th>Word described</th><th>Example description</th><th>AI feedback</th></tr>';
+    for (var i=1;i<=A3_N;i++){
+      var id='s'+i, r = S.a3.ai && S.a3.ai[id], cls = r ? (r.correct?'ok':'bad') : '';
+      var given = String(S.a3.draft[id]||'').trim();
+      var w = r && r.word !== 'none' ? r.word : '';
+      var model = w ? esc(A3_MODELS[w]) : '<span class="note">Remaining words: ' + A3_WORDS.join(', ') + '</span>';
+      var comment = r ? esc(r.comment) : '<i>AI feedback wasn’t available for this sentence. Your teacher will check it.</i>';
+      body += '<tr class="'+cls+'"><td><span class="tag '+cls+'">'+i+' '+(r?(r.correct?'✓':'✗'):'•')+'</span></td>'+
+              '<td class="hand">'+(given?esc(given):'—')+'</td><td><b>'+(w||(r?'none':'—'))+'</b></td><td>'+model+'</td><td>'+comment+'</td></tr>';
+    }
+    if (!S.a3.ai) body += '<tr><td></td><td colspan="4" class="note">Example descriptions for all seven words: ' +
+      A3_WORDS.map(function(w){ return '<b>'+w+'</b> — '+esc(A3_MODELS[w]); }).join('<br>') + '</td></tr>';
+  }
+  $('revHead').innerHTML = head; $('revBody').innerHTML = body;
+  $('btnRevBack').textContent = ret === 'results' ? 'Back to results' : 'Back to home';
+  show('s-review');
+}
+$('btnRevBack').addEventListener('click', function(){
+  if (reviewReturn === 'results') show('s-results');
+  else { renderHome(); show('s-home'); }
+});
+
+/* ===================== RESULTS & SUBMIT ===================== */
+function fmtTime(ms){ var s = Math.round(ms/1000); return Math.floor(s/60) + ' min ' + (s%60) + ' sec'; }
+function showResults(){
+  if (!endTime) endTime = Date.now();
+  $('rName').textContent = student.name;
+  $('rClass').textContent = student.cls;
+  $('rTime').textContent = fmtTime(endTime - startTime);
+  $('rScores').textContent = a1Text() + ', ' + a2Text() + ', ' + a3Text();
+  $('rReview').innerHTML =
+    '<li><span><b>1</b> Wordsearch — '+a1Text()+'</span><button class="btn ghost small" data-r="1">Review</button></li>'+
+    '<li><span><b>2</b> What or who? — '+a2Text()+'</span><button class="btn ghost small" data-r="2">Review</button></li>'+
+    '<li><span><b>3</b> Describe seven words — '+a3Text()+'</span><button class="btn ghost small" data-r="3">Review</button></li>';
+  [].forEach.call($('rReview').querySelectorAll('[data-r]'), function(b){ b.onclick = function(){ openReview(+b.getAttribute('data-r'), 'results'); }; });
+  show('s-results');
+  if (!submitted && !submitting) sendResults();
+}
+
+/* Wrong answers for the new WB Data Collector: objects {q, chosen, correct} show the correct
+   answer in bold red; Activity 3 sentences are always sent as plain lines (not marked wrong). */
+function buildWrongList(){
+  var out = [];
+  WORDS.forEach(function(x){ if (!x.ex && !S.a1.found[x.w]) out.push({ q: '1', chosen: 'not found', correct: x.w }); });
+  A2.forEach(function(x){ if (!S.a2.res[x.l]) out.push({ q: '2' + x.l, chosen: (S.a2.ans[x.l]||'').trim() || '(blank)', correct: x.a[0] }); });
+  for (var i=1;i<=A3_N;i++){
+    var r = S.a3.ai && S.a3.ai['s'+i];
+    var txt = String(S.a3.draft['s'+i]||'').trim() || '(blank)';
+    out.push('3.' + i + ': ' + txt + (r ? ' [AI: ' + (r.correct ? 'correct' : 'incorrect') + (r.word !== 'none' ? ', ' + r.word : '') + ']' : ' [no AI feedback]'));
+  }
+  return out;
+}
+function submitGameData(data){
+  return fetch(GAME_DATA_ENDPOINT, {
+    method: 'POST', mode: 'no-cors',
+    headers: {'Content-Type': 'text/plain;charset=utf-8'},
+    body: JSON.stringify(data)
+  });
+}
+function sendResults(){
+  submitting = true;
+  var s = $('submitStatus');
+  s.className = ''; s.textContent = 'Sending your results…';
+  $('btnResend').style.display = 'none';
+  var secs = Math.max(0, Math.round((endTime - startTime)/1000));
+  var minutesPlayed = ('0' + Math.floor(secs/60)).slice(-2) + ':' + ('0' + (secs%60)).slice(-2);   /* MM:SS */
+  submitGameData({
+    gameName: GAME_NAME,
+    studentName: student.name,
+    class: student.cls,
+    score: a1Text() + ', ' + a2Text() + ', ' + a3Text(),
+    minutesPlayed: minutesPlayed,
+    wrongQuestions: buildWrongList(),
+    attempts: 1
+  }).then(function(){
+    submitted = true; submitting = false;
+    s.className = 'ok'; s.textContent = '✓ Your results have been sent to your teacher.';
+  }).catch(function(){
+    submitting = false;
+    s.className = 'bad'; s.textContent = 'Your results could not be sent. Check your internet connection and try again.';
+    $('btnResend').style.display = 'inline-block';
+  });
+}
+$('btnResend').addEventListener('click', function(){ if (!submitted && !submitting) sendResults(); });
+
+/* ===================== Tablet scroll hint ===================== */
+(function(){
+  var hint = $('scrollHint'), queued = false;
+  function update(){
+    queued = false;
+    var se = document.scrollingElement || document.documentElement;
+    var left = se.scrollHeight - (window.innerHeight + window.scrollY);
+    var scr = document.querySelector('.screen.active');
+    var bar = scr && scr.querySelector('.actfoot');
+    var bottom = ((bar && bar.offsetParent) ? Math.round(bar.getBoundingClientRect().height) : 0) + 14 + 'px';
+    if (hint.style.bottom !== bottom) hint.style.bottom = bottom;
+    var on = left > 40;
+    if (hint.classList.contains('show') !== on) hint.classList.toggle('show', on);
+  }
+  function request(){ if (!queued){ queued = true; requestAnimationFrame(update); } }
+  hint.addEventListener('click', function(){ window.scrollBy({ top: Math.round(window.innerHeight * 0.7), behavior: 'smooth' }); });
+  window.addEventListener('scroll', request, { passive: true });
+  window.addEventListener('resize', request);
+  new MutationObserver(function(muts){
+    for (var i = 0; i < muts.length; i++) if (muts[i].target !== hint){ request(); return; }
+  }).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['class', 'style', 'hidden'] });
+  request();
+})();
+</script>
+</body>
+</html>
