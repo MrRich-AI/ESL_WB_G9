@@ -35,6 +35,7 @@ Richard Imbeau, IGCSE ESL teacher (Grade 9: 9A1, 9A2, 9A3; Grade 10: 10A1) at Ro
 - **Student identity:** start screen with required name and class inputs, no placeholder text; Start enabled only when both are filled. Name and class shown on the results screen.
 - **Multiple-choice:** single attempt per question — locks on any answer, reveals the correct answer, Next unlocks once answered regardless of correctness. For complex types (sorting, matching, drag-and-drop), ask how scoring/advancement should work.
 - **Word-bank activities:** no per-question Check button. Students fill all gaps freely (editable, kept if they leave and return). A single "Check answers" button unlocks only once every gap is filled, then grades and locks everything at once.
+- **No pasting:** block pasting into every answer box (gaps, text inputs, textareas): keyboard paste, right-click/long-press paste and drag-and-drop. Show a short "Please type your answer." message when a student tries. Copying is not blocked and attempts are not logged. WB builds only — Essay builds allow pasting.
 - **Review:** after each activity, a review screen lists every question (correct and wrong) with the student's answer, the correct answer and an explanation, before returning to the homescreen. Completed activities keep a persistent "Review" button on the homescreen opening that same screen.
 - **Scores:** shown as fractions of the total (e.g. "6/7").
 - **No "Try Again"** and no replay attempts counter; `attempts` is hardcoded to 1.
