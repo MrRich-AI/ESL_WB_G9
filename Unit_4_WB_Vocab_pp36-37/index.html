@@ -892,15 +892,23 @@ function showResults(){
 
 /* Wrong answers for the new WB Data Collector: objects {q, chosen, correct} show the correct
    answer in bold red; Activity 3 sentences are always sent as plain lines (not marked wrong). */
+/* One line per exercise, starting "Ex.1:", "Ex.2:", "Ex.3:"; items on a line separated by commas.
+   An exercise with nothing missed is left out (Ex.3 sentences are always sent). */
 function buildWrongList(){
   var out = [];
-  WORDS.forEach(function(x){ if (!x.ex && !S.a1.found[x.w]) out.push({ q: '1', chosen: 'not found', correct: x.w }); });
-  A2.forEach(function(x){ if (!S.a2.res[x.l]) out.push({ q: '2' + x.l, chosen: (S.a2.ans[x.l]||'').trim() || '(blank)', correct: x.a[0] }); });
+  var miss1 = WORDS.filter(function(x){ return !x.ex && !S.a1.found[x.w]; }).map(function(x){ return x.w; });
+  if (miss1.length) out.push('Ex.1: ' + miss1.join(', ') + ' (not found)');
+  var miss2 = A2.filter(function(x){ return !S.a2.res[x.l]; }).map(function(x){
+    return x.l + ' ' + ((S.a2.ans[x.l]||'').trim() || '(blank)') + ' → ' + x.a[0];
+  });
+  if (miss2.length) out.push('Ex.2: ' + miss2.join(', '));
+  var s3 = [];
   for (var i=1;i<=A3_N;i++){
     var r = S.a3.ai && S.a3.ai['s'+i];
-    var txt = String(S.a3.draft['s'+i]||'').trim() || '(blank)';
-    out.push('3.' + i + ': ' + txt + (r ? ' [AI: ' + (r.correct ? 'correct' : 'incorrect') + (r.word !== 'none' ? ', ' + r.word : '') + ']' : ' [no AI feedback]'));
+    var txt = String(S.a3.draft['s'+i]||'').replace(/\s+/g,' ').trim() || '(blank)';
+    s3.push(i + ' ' + txt + (r ? ' [AI ' + (r.correct ? '✓' : '✗') + (r.word !== 'none' ? ' ' + r.word : '') + ']' : ' [no AI feedback]'));
   }
+  out.push('Ex.3: ' + s3.join(', '));
   return out;
 }
 function submitGameData(data){
