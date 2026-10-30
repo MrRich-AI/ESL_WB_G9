@@ -269,6 +269,7 @@ body{background:var(--desk);font-family:'Source Sans 3',Arial,Helvetica,sans-ser
     <div class="content">
       <h2 class="lfsub">Vocabulary focus: Transport</h2>
       <div class="instr"><span class="n">3</span><span>Write sentences describing the other <b>seven</b> words from Activity 1.</span></div>
+      <div style="margin:0 0 16px 38px;max-width:640px" class="wbox" id="a3box"></div>
       <div id="a3body"></div>
       <div class="actfoot">
         <button class="btn ghost small" id="a3Home">&larr; Home</button>
@@ -697,7 +698,10 @@ $('a2Done').addEventListener('click', function(){ S.a2.done = true; openReview(2
 $('a2Home').addEventListener('click', function(){ renderHome(); show('s-home'); });
 
 /* ===================== ACTIVITY 3 (AI feedback) ===================== */
-function openA3(){ $('a3Warn').style.display = 'none'; renderA3(); show('s-a3'); }
+function openA3(){
+  $('a3box').innerHTML = A3_WORDS.map(function(w){ return '<span>'+w+'</span>'; }).join('');
+  $('a3Warn').style.display = 'none'; renderA3(); show('s-a3');
+}
 function footA3(){
   $('a3prog').textContent = S.a3.ai ? 'AI score: ' + a3Text() : 'Written ' + a3Written() + '/' + A3_N;
   $('a3Done').textContent = S.a3.done ? 'See review' : 'Finish activity';
